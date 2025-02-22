@@ -185,6 +185,10 @@ PacketGetMonitorMode(PCHAR AdapterName _U_)
 #define NDIS_STATUS_NOT_SUPPORTED	0xc00000bb	/* STATUS_NOT_SUPPORTED */
 #define NDIS_STATUS_NOT_RECOGNIZED	0x00010001
 
+#ifndef PACKET_OID_DATA_LENGTH
+#define PACKET_OID_DATA_LENGTH(_DataLength) \
+	(offsetof(PACKET_OID_DATA, Data) + _DataLength)
+#endif
 static int
 oid_get_request(ADAPTER *adapter, bpf_u_int32 oid, void *data, size_t *lenp,
     char *errbuf)
@@ -193,12 +197,9 @@ oid_get_request(ADAPTER *adapter, bpf_u_int32 oid, void *data, size_t *lenp,
 
 	/*
 	 * Allocate a PACKET_OID_DATA structure to hand to PacketRequest().
-	 * It should be big enough to hold "*lenp" bytes of data; it
-	 * will actually be slightly larger, as PACKET_OID_DATA has a
-	 * 1-byte data array at the end, standing in for the variable-length
-	 * data that's actually there.
+	 * It should be big enough to hold "*lenp" bytes of data;
 	 */
-	oid_data_arg = malloc(sizeof (PACKET_OID_DATA) + *lenp);
+	oid_data_arg = malloc(PACKET_OID_DATA_LENGTH(*lenp));
 	if (oid_data_arg == NULL) {
 		snprintf(errbuf, PCAP_ERRBUF_SIZE,
 		    "Couldn't allocate argument buffer for PacketRequest");
@@ -393,12 +394,9 @@ pcap_oid_set_request_npf(pcap_t *p, bpf_u_int32 oid, const void *data,
 
 	/*
 	 * Allocate a PACKET_OID_DATA structure to hand to PacketRequest().
-	 * It should be big enough to hold "*lenp" bytes of data; it
-	 * will actually be slightly larger, as PACKET_OID_DATA has a
-	 * 1-byte data array at the end, standing in for the variable-length
-	 * data that's actually there.
+	 * It should be big enough to hold "*lenp" bytes of data;
 	 */
-	oid_data_arg = malloc(sizeof (PACKET_OID_DATA) + *lenp);
+	oid_data_arg = malloc(PACKET_OID_DATA_LENGTH(*lenp));
 	if (oid_data_arg == NULL) {
 		snprintf(p->errbuf, PCAP_ERRBUF_SIZE,
 		    "Couldn't allocate argument buffer for PacketRequest");
@@ -832,6 +830,10 @@ pcap_activate_npf(pcap_t *p)
 	int status = 0;
 	struct bpf_insn total_insn;
 	struct bpf_program total_prog;
+#ifdef HAVE_PACKET_GET_INFO
+	char oid_data_buf[PACKET_OID_DATA_LENGTH(sizeof(ULONG))] = {0};
+	PACKET_OID_DATA *oid_data_arg = (PACKET_OID_DATA *)oid_data_buf;
+#endif
 
 	if (p->opt.rfmon) {
 		/*
@@ -1087,6 +1089,23 @@ pcap_activate_npf(pcap_t *p)
 		break;
 	}
 #endif /* HAVE_PACKET_GET_TIMESTAMP_MODES */
+
+#if defined(HAVE_PACKET_GET_INFO) && defined(NPF_GETINFO_BPFEXT) && defined(SKF_AD_VLAN_TAG_PRESENT)
+
+	/* Can we generate special code for VLAN checks? */
+	oid_data_arg->Oid = NPF_GETINFO_BPFEXT;
+	oid_data_arg->Length = sizeof(ULONG);
+	if (PacketGetInfo(pw->adapter, oid_data_arg)) {
+		if (*((ULONG *)oid_data_arg->Data) >= SKF_AD_VLAN_TAG_PRESENT) {
+			/* Yes, we can.  Request that we do so. */
+			p->bpf_codegen_flags |= BPF_SPECIAL_VLAN_HANDLING;
+		}
+	}
+	else {
+		pcapint_fmt_errmsg_for_win32_err(p->errbuf, PCAP_ERRBUF_SIZE,
+		    GetLastError(), "Error calling PacketGetInfo");
+	}
+#endif /* HAVE_PACKET_GET_INFO */
 
 	/*
 	 * Turn a negative snapshot value (invalid), a snapshot value of

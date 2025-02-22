@@ -94,6 +94,7 @@ DayOfTheWeek, Month DD, YYYY / The Tcpdump Group
         Fixes issue #1396.
       filtertest: Add "-l" flag to use Linux BPF extensions.
       filtertest: Use ntohl() on the netmask to fix the -m option.
+      filtertest: Add support for stdin as "-" to the -F option.
     Hurd:
       Support network capture devices too.
       Fix a few device activation bugs.
@@ -101,6 +102,11 @@ DayOfTheWeek, Month DD, YYYY / The Tcpdump Group
       Add kernel filtering, fix userland filtering.
     OpenBSD:
       Use getprotobyname_r() correctly on OpenBSD.
+    Linux:
+      Do not use ether_hostton() from musl libc.
+      Fix propagation of getprotobyname_r() errors.
+    Haiku:
+      Look for ethers(5) in /boot/system/settings/network/.
     DAG:
       Always set PCAP_IF_CONNECTION_STATUS_NOT_APPLICABLE.
       In dag_findalldevs() handle known errors better.
@@ -138,12 +144,16 @@ DayOfTheWeek, Month DD, YYYY / The Tcpdump Group
     Linux:
       Fix check for mac80211 phydev.
       Don't create monitor-mode interface if we're capturing on one.
+      Expand the table of DSA tag types to include all current types.
+      Fix an error message when deleting a monN interface.
     FreeBSD:
       Fix detection and enablng of zero-copy supporrt.
       Fix errors in the zero-copy code.
     Solaris:
       Fix not to ignore logical interfaces in fad-gifc.c and
         fad-glifc.c.
+    Windows:
+      Fix filtering for VLAN-tagged frames.
     D-Bus:
       Fix message leak.
     Capture file writing:

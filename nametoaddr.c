@@ -35,6 +35,17 @@
 
   #include <netinet/in.h>
 
+  #if defined(__linux__) && defined(HAVE_ETHER_HOSTTON)
+    #include <features.h>
+    #if ! defined(__GLIBC__) && ! defined(__UCLIBC__)
+      /*
+       * In musl libc (which does not identify itself) ether_hostton() is
+       * present and does not work.
+       */
+      #undef HAVE_ETHER_HOSTTON
+    #endif
+  #endif // defined(__linux__) && defined(HAVE_ETHER_HOSTTON)
+
   #ifdef HAVE_ETHER_HOSTTON
     #if defined(NET_ETHERNET_H_DECLARES_ETHER_HOSTTON)
       /*
@@ -480,12 +491,26 @@ pcap_nametoproto(const char *str)
 	int err;
 
 	err = getprotobyname_r(str, &result_buf, buf, sizeof buf, &p);
+	/*
+	 * As far as GNU libc implementation goes, an "error" means the
+	 * protocol database could not be searched, which could mean err ==
+	 * ERANGE if the buffer is too small or ENOENT if the protocols(5)
+	 * file does not exist (the man page does not document the latter
+	 * eventuality).  If the database has been searched normally and the
+	 * requested protocol name was not found, it is not an "error" and
+	 * err == 0.
+	 *
+	 * This notwithstanding, p == NULL iff a record was not found for any
+	 * reason (whether an "error" or not), which is the same semantics as
+	 * in every other HAVE_xxxxx branch of this block.  The final check
+	 * after the block will catch that if necessary.
+	 */
 	if (err != 0) {
 		/*
 		 * XXX - dynamically allocate the buffer, and make it
 		 * bigger if we get ERANGE back?
 		 */
-		return 0;
+		return PROTO_UNDEF;
 	}
   #elif defined(HAVE_SOLARIS_GETPROTOBYNAME_R)
 	/*

@@ -18,9 +18,6 @@
 /* Define to 1 if you have the `asprintf' function. */
 #cmakedefine HAVE_ASPRINTF 1
 
-/* Define to 1 if you have the <config/HaikuConfig.h> header file. */
-#cmakedefine HAVE_CONFIG_HAIKUCONFIG_H 1
-
 /* define if you have the DAG API */
 #cmakedefine HAVE_DAG_API 1
 
@@ -48,14 +45,14 @@
 /* Define to 1 if you have the `getspnam' function. */
 #cmakedefine HAVE_GETSPNAM 1
 
+/* Define to 1 if using GNU libc. */
+#cmakedefine HAVE_GLIBC 1
+
 /* Define to 1 if you have a GNU-style `strerror_r' function. */
 #cmakedefine HAVE_GNU_STRERROR_R 1
 
 /* on HP-UX 10.20 or later */
 #cmakedefine HAVE_HPUX10_20_OR_LATER 1
-
-/* Define to 1 if you have the <hurd.h> header file. */
-#cmakedefine HAVE_HURD_H 1
 
 /* if libdlpi exists */
 #cmakedefine HAVE_LIBDLPI 1
@@ -75,14 +72,8 @@
 /* Define to 1 if you have the <linux/net_tstamp.h> header file. */
 #cmakedefine HAVE_LINUX_NET_TSTAMP_H 1
 
-/* Define to 1 if you have the <linux/socket.h> header file. */
-#cmakedefine HAVE_LINUX_SOCKET_H 1
-
 /* Define to 1 if you have the <linux/usbdevice_fs.h> header file. */
 #cmakedefine HAVE_LINUX_USBDEVICE_FS_H 1
-
-/* Define to 1 if you have the <netpacket/packet.h> header file. */
-#cmakedefine HAVE_NETPACKET_PACKET_H 1
 
 /* Define to 1 if you have the <net/bpf.h> header file. */
 #cmakedefine HAVE_NET_BPF_H 1
@@ -99,7 +90,10 @@
 /* Define to 1 if Packet32 API (Npcap driver) is available */
 #cmakedefine HAVE_PACKET32 1
 
-/* Define to 1 if Npcap's version.h is available */
+/* Define to 1 if Npcap BPF extension definitions are available */
+#cmakedefine HAVE_NPCAP_BPF_H 1
+
+/* Define to 1 if NPcap's version.h is available */
 #cmakedefine HAVE_VERSION_H 1
 
 /* Define to 1 if you have a POSIX-style `strerror_r' function. */
@@ -179,8 +173,8 @@
 /* Define to 1 if you have the <sys/ioccom.h> header file. */
 #cmakedefine HAVE_SYS_IOCCOM_H 1
 
-/* Define to 1 if you have the <sys/sockio.h> header file. */
-#cmakedefine HAVE_SYS_SOCKIO_H 1
+/* Define to 1 if using uclibc(-ng). */
+#cmakedefine HAVE_UCLIBC 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
@@ -208,6 +202,9 @@
 
 /* Define to 1 if you have the `PacketIsLoopbackAdapter' function. */
 #cmakedefine HAVE_PACKET_IS_LOOPBACK_ADAPTER 1
+
+/* Define to 1 if you have the `PacketGetInfo' function. */
+#cmakedefine HAVE_PACKET_GET_INFO 1
 
 /* IPv6 */
 #cmakedefine INET6 1

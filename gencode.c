@@ -60,6 +60,10 @@
 #endif
 
 #ifdef _WIN32
+  #ifdef HAVE_NPCAP_BPF_H
+    /* Defines BPF extensions for Npcap */
+    #include <npcap-bpf.h>
+  #endif
   #ifdef INET6
     #if defined(__MINGW32__) && defined(DEFINE_ADDITIONAL_IPV6_STUFF)
 /* IPv6 address */
@@ -5480,17 +5484,16 @@ gen_gateway(compiler_state_t *cstate, const u_char *eaddr,
 		case DLT_PPI:
 			b0 = gen_wlanhostop(cstate, eaddr, Q_OR);
 			break;
+		case DLT_IP_OVER_FC:
+			b0 = gen_ipfchostop(cstate, eaddr, Q_OR);
+			break;
 		case DLT_SUNATM:
 			/*
 			 * This is LLC-multiplexed traffic; if it were
 			 * LANE, cstate->linktype would have been set to
 			 * DLT_EN10MB.
 			 */
-			bpf_error(cstate,
-			    "'gateway' supported only on ethernet/FDDI/token ring/802.11/ATM LANE/Fibre Channel");
-		case DLT_IP_OVER_FC:
-			b0 = gen_ipfchostop(cstate, eaddr, Q_OR);
-			break;
+			 /* FALLTHROUGH */
 		default:
 			bpf_error(cstate,
 			    "'gateway' supported only on ethernet/FDDI/token ring/802.11/ATM LANE/Fibre Channel");
@@ -8464,8 +8467,7 @@ gen_broadcast(compiler_state_t *cstate, int proto)
 		b0 = gen_linktype(cstate, ETHERTYPE_IP);
 		hostmask = ~cstate->netmask;
 		b1 = gen_mcmp(cstate, OR_LINKPL, 16, BPF_W, 0, hostmask);
-		b2 = gen_mcmp(cstate, OR_LINKPL, 16, BPF_W,
-			      ~0 & hostmask, hostmask);
+		b2 = gen_mcmp(cstate, OR_LINKPL, 16, BPF_W, hostmask, hostmask);
 		gen_or(b1, b2);
 		gen_and(b0, b2);
 		return b2;
@@ -9270,7 +9272,7 @@ gen_vlan_patch_vid_test(compiler_state_t *cstate, struct block *b_vid)
 	unsigned cnt;
 
 	s = new_stmt(cstate, BPF_LD|BPF_B|BPF_ABS);
-	s->s.k = SKF_AD_OFF + SKF_AD_VLAN_TAG_PRESENT;
+	s->s.k = (bpf_u_int32)(SKF_AD_OFF + SKF_AD_VLAN_TAG_PRESENT);
 
 	/* true -> next instructions, false -> beginning of b_vid */
 	sjeq = new_stmt(cstate, JMP(BPF_JEQ));
@@ -9279,7 +9281,7 @@ gen_vlan_patch_vid_test(compiler_state_t *cstate, struct block *b_vid)
 	sappend(s, sjeq);
 
 	s2 = new_stmt(cstate, BPF_LD|BPF_H|BPF_ABS);
-	s2->s.k = SKF_AD_OFF + SKF_AD_VLAN_TAG;
+	s2->s.k = (bpf_u_int32)(SKF_AD_OFF + SKF_AD_VLAN_TAG);
 	sappend(s, s2);
 	sjeq->s.jt = s2;
 
@@ -9317,7 +9319,7 @@ gen_vlan_bpf_extensions(compiler_state_t *cstate, bpf_u_int32 vlan_num,
 	/* generate new filter code based on extracting packet
 	 * metadata */
 	s = new_stmt(cstate, BPF_LD|BPF_B|BPF_ABS);
-	s->s.k = SKF_AD_OFF + SKF_AD_VLAN_TAG_PRESENT;
+	s->s.k = (bpf_u_int32)(SKF_AD_OFF + SKF_AD_VLAN_TAG_PRESENT);
 
 	b0 = new_block(cstate, JMP(BPF_JEQ));
 	b0->stmts = s;
