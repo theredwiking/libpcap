@@ -708,10 +708,8 @@ static struct slist *xfer_to_x(compiler_state_t *, struct arth *);
 static struct slist *xfer_to_a(compiler_state_t *, struct arth *);
 static struct block *gen_mac_multicast(compiler_state_t *, int);
 static struct block *gen_len(compiler_state_t *, int, int);
-static struct block *gen_check_802_11_data_frame(compiler_state_t *);
 static struct block *gen_encap_ll_check(compiler_state_t *cstate);
 
-static struct block *gen_ppi_dlt_check(compiler_state_t *);
 static struct block *gen_atmfield_code_internal(compiler_state_t *, int,
     bpf_u_int32, int, int);
 static struct block *gen_atmtype_llc(compiler_state_t *);
@@ -1104,8 +1102,6 @@ merge(struct block *b0, struct block *b1)
 int
 finish_parse(compiler_state_t *cstate, struct block *p)
 {
-	struct block *ppi_dlt_check;
-
 	/*
 	 * Catch errors reported by us and routines below us, and return -1
 	 * on an error.
@@ -1147,9 +1143,11 @@ finish_parse(compiler_state_t *cstate, struct block *p)
 	 * 802.11 code (*and* anything else for which PPI is used)
 	 * and choose between them early in the BPF program?
 	 */
-	ppi_dlt_check = gen_ppi_dlt_check(cstate);
-	if (ppi_dlt_check != NULL)
+	if (cstate->linktype == DLT_PPI) {
+		struct block *ppi_dlt_check = gen_cmp(cstate, OR_PACKET,
+			4, BPF_W, SWAPLONG(DLT_IEEE802_11));
 		gen_and(ppi_dlt_check, p);
+	}
 
 	backpatch(p, gen_retblk_internal(cstate, cstate->snaplen));
 	p->sense = !p->sense;
@@ -2134,8 +2132,7 @@ gen_ether_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto)
 		 * DSAP, as we do for other types <= ETHERMTU
 		 * (i.e., other SAP values)?
 		 */
-		b0 = gen_cmp_gt(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
-		gen_not(b0);
+		b0 = gen_cmp_le(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
 		b1 = gen_cmp(cstate, OR_LLC, 0, BPF_H, (ll_proto << 8) | ll_proto);
 		gen_and(b0, b1);
 		return b1;
@@ -2188,8 +2185,7 @@ gen_ether_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto)
 		 * Now we generate code to check for 802.3
 		 * frames in general.
 		 */
-		b0 = gen_cmp_gt(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
-		gen_not(b0);
+		b0 = gen_cmp_le(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
 
 		/*
 		 * Now add the check for 802.3 frames before the
@@ -2217,11 +2213,10 @@ gen_ether_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto)
 
 		/*
 		 * Check for 802.2 encapsulation (EtherTalk phase 2?);
-		 * we check for an Ethernet type field less than
+		 * we check for an Ethernet type field less or equal than
 		 * 1500, which means it's an 802.3 length field.
 		 */
-		b0 = gen_cmp_gt(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
-		gen_not(b0);
+		b0 = gen_cmp_le(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
 
 		/*
 		 * 802.2-encapsulated ETHERTYPE_ATALK packets are
@@ -2260,8 +2255,7 @@ gen_ether_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto)
 			 * a length field, <= ETHERMTU) and
 			 * then check the DSAP.
 			 */
-			b0 = gen_cmp_gt(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
-			gen_not(b0);
+			b0 = gen_cmp_le(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
 			b1 = gen_cmp(cstate, OR_LINKTYPE, 2, BPF_B, ll_proto);
 			gen_and(b0, b1);
 			return b1;
@@ -3172,32 +3166,6 @@ insert_compute_vloffsets(compiler_state_t *cstate, struct block *b)
 	}
 }
 
-static struct block *
-gen_ppi_dlt_check(compiler_state_t *cstate)
-{
-	struct slist *s_load_dlt;
-	struct block *b;
-
-	if (cstate->linktype == DLT_PPI)
-	{
-		/* Create the statements that check for the DLT
-		 */
-		s_load_dlt = new_stmt(cstate, BPF_LD|BPF_W|BPF_ABS);
-		s_load_dlt->s.k = 4;
-
-		b = new_block(cstate, JMP(BPF_JEQ));
-
-		b->stmts = s_load_dlt;
-		b->s.k = SWAPLONG(DLT_IEEE802_11);
-	}
-	else
-	{
-		b = NULL;
-	}
-
-	return b;
-}
-
 /*
  * Take an absolute offset, and:
  *
@@ -3391,7 +3359,9 @@ gen_linktype(compiler_state_t *cstate, bpf_u_int32 ll_proto)
 		/*
 		 * Check that we have a data frame.
 		 */
-		b0 = gen_check_802_11_data_frame(cstate);
+		b0 = gen_mcmp(cstate, OR_LINKHDR, 0, BPF_B,
+			IEEE80211_FC0_TYPE_DATA,
+			IEEE80211_FC0_TYPE_MASK);
 
 		/*
 		 * Now check for the specified link-layer type.
@@ -3877,11 +3847,10 @@ gen_llc_internal(compiler_state_t *cstate)
 
 	case DLT_EN10MB:
 		/*
-		 * We check for an Ethernet type field less than
+		 * We check for an Ethernet type field less or equal than
 		 * 1500, which means it's an 802.3 length field.
 		 */
-		b0 = gen_cmp_gt(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
-		gen_not(b0);
+		b0 = gen_cmp_le(cstate, OR_LINKTYPE, 0, BPF_H, ETHERMTU);
 
 		/*
 		 * Now check for the purported DSAP and SSAP not being
@@ -3930,8 +3899,9 @@ gen_llc_internal(compiler_state_t *cstate)
 		/*
 		 * Check that we have a data frame.
 		 */
-		b0 = gen_check_802_11_data_frame(cstate);
-		return b0;
+		return gen_mcmp(cstate, OR_LINKHDR, 0, BPF_B,
+			IEEE80211_FC0_TYPE_DATA,
+			IEEE80211_FC0_TYPE_MASK);
 
 	default:
 		bpf_error(cstate, "'llc' not supported for %s",
@@ -6577,32 +6547,6 @@ gen_protochain(compiler_state_t *cstate, bpf_u_int32 v, int proto)
 }
 #endif /* !defined(NO_PROTOCHAIN) */
 
-static struct block *
-gen_check_802_11_data_frame(compiler_state_t *cstate)
-{
-	struct slist *s;
-	struct block *b0, *b1;
-
-	/*
-	 * A data frame has the 0x08 bit (b3) in the frame control field set
-	 * and the 0x04 bit (b2) clear.
-	 */
-	s = gen_load_a(cstate, OR_LINKHDR, 0, BPF_B);
-	b0 = new_block(cstate, JMP(BPF_JSET));
-	b0->s.k = 0x08;
-	b0->stmts = s;
-
-	s = gen_load_a(cstate, OR_LINKHDR, 0, BPF_B);
-	b1 = new_block(cstate, JMP(BPF_JSET));
-	b1->s.k = 0x04;
-	b1->stmts = s;
-	gen_not(b1);
-
-	gen_and(b1, b0);
-
-	return b0;
-}
-
 /*
  * Generate code that checks whether the packet is a packet for protocol
  * <proto> and whether the type field in that protocol's header has
@@ -8763,9 +8707,7 @@ gen_inbound_outbound(compiler_state_t *cstate, const int outbound)
 	 */
 	switch (cstate->linktype) {
 	case DLT_SLIP:
-		b0 = gen_relation_internal(cstate, BPF_JEQ,
-			  gen_load_internal(cstate, Q_LINK, gen_loadi_internal(cstate, 0), 1),
-			  gen_loadi_internal(cstate, 0),
+		b0 = gen_cmp(cstate, OR_LINKHDR, 0, BPF_B,
 			  outbound ? SLIPDIR_OUT : SLIPDIR_IN);
 		break;
 
@@ -9032,6 +8974,7 @@ gen_p80211_type(compiler_state_t *cstate, bpf_u_int32 type, bpf_u_int32 mask)
 	case DLT_PRISM_HEADER:
 	case DLT_IEEE802_11_RADIO_AVS:
 	case DLT_IEEE802_11_RADIO:
+	case DLT_PPI:
 		b0 = gen_mcmp(cstate, OR_LINKHDR, 0, BPF_B, type, mask);
 		break;
 
@@ -9061,6 +9004,7 @@ gen_p80211_fcdir(compiler_state_t *cstate, bpf_u_int32 fcdir)
 	case DLT_PRISM_HEADER:
 	case DLT_IEEE802_11_RADIO_AVS:
 	case DLT_IEEE802_11_RADIO:
+	case DLT_PPI:
 		break;
 
 	default:
@@ -10205,15 +10149,6 @@ gen_atmfield_code_internal(compiler_state_t *cstate, int atmfield,
 		    0xffffffffU, jtype, reverse, jvalue);
 		break;
 
-	case A_CALLREFTYPE:
-		if (!cstate->is_atm)
-			bpf_error(cstate, "'callref' supported only on raw ATM");
-		if (cstate->off_proto == OFFSET_NOT_SET)
-			abort();
-		b0 = gen_ncmp(cstate, OR_LINKHDR, cstate->off_proto, BPF_B,
-		    0xffffffffU, jtype, reverse, jvalue);
-		break;
-
 	default:
 		abort();
 	}
@@ -10352,13 +10287,6 @@ gen_atmtype_abbrev(compiler_state_t *cstate, int type)
 		cstate->off_linkpl.constant_part = cstate->off_linkhdr.constant_part + 14;	/* Ethernet */
 		cstate->off_nl = 0;			/* Ethernet II */
 		cstate->off_nl_nosnap = 3;		/* 802.3+802.2 */
-		break;
-
-	case A_LLC:
-		/* Get all LLC-encapsulated packets */
-		if (!cstate->is_atm)
-			bpf_error(cstate, "'llc' supported only on raw ATM");
-		b1 = gen_atmtype_llc(cstate);
 		break;
 
 	default:

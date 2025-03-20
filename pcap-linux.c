@@ -2083,8 +2083,8 @@ static int map_arphrd_to_dlt(pcap_t *handle, int arptype,
 			if (ret == 1) {
 				/*
 				 * This is a DSA master/management network
-				 * device linktype is already set by
-				 * iface_dsa_get_proto_info() set an
+				 * device, linktype is already set by
+				 * iface_dsa_get_proto_info(), set an
 				 * appropriate offset here.
 				 */
 				handle->offset = 2;
@@ -4146,17 +4146,17 @@ static int pcap_handle_packet_mmap(
 
 			/*
 			 * Put multi-byte header fields in a byte-order
-			 *-independent format.
+			 * -independent format.
 			 */
 			if (canxl_hdr->flags & CANXL_XLF) {
 				/*
 				 * This is a CAN XL frame.
 				 *
 				 * DLT_CAN_SOCKETCAN is specified as having
-				 * the Priority ID/VCID field in big--
+				 * the Priority ID/VCID field in big-
 				 * endian byte order, and the payload length
 				 * and Acceptance Field in little-endian byte
-				 * order. but capturing on a CAN device
+				 * order, but capturing on a CAN device
 				 * provides them in host byte order.
 				 * Convert them to the appropriate byte
 				 * orders.
@@ -4171,7 +4171,7 @@ static int pcap_handle_packet_mmap(
 				 * headers, and treats that field as
 				 * being big-endian.
 				 *
-				 * The other fields are put in little-
+				 * The reason other fields are put in little-
 				 * endian byte order is that older
 				 * libpcap code, ignorant of CAN XL,
 				 * left those fields alone, and the
@@ -5441,15 +5441,15 @@ static struct dsa_proto {
 	{ "ar9331", DLT_EN10MB },
 
 	/*
-	 * Type 2, without an Ethertype at the beginning,
+	 * Type 2, without an EtherType at the beginning,
 	 * assigned a LINKTYPE_/DLT_ value.
 	 */
 	{ "brcm", DLT_DSA_TAG_BRCM },
 
 	/*
-	 * Type 2, with Ethertype 0x8874, assigned to Broadcom.
+	 * Type 2, with EtherType 0x8874, assigned to Broadcom.
 	 *
-	 * This doies not require a LINKTYPE_/DLT_ value, it
+	 * This does not require a LINKTYPE_/DLT_ value, it
 	 * just requires that Ethertype 0x8874 be dissected
 	 * properly.
 	 */
@@ -5461,14 +5461,14 @@ static struct dsa_proto {
 	{ "brcm-prepend", DLT_DSA_TAG_BRCM_PREPEND },
 
 	/*
-	 * Type 2, without an Etherype at he beginning,
+	 * Type 2, without an EtherType at the beginning,
 	 * assigned a LINKTYPE_/DLT_ value.
 	 */
 	{ "dsa", DLT_DSA_TAG_DSA },
 
 	/*
 	 * Type 2, with an Ethertype field, but without
-	 * an assigned Ethertype value that can be relied
+	 * an assigned EtherType value that can be relied
 	 * on; assigned a LINKTYPE_/DLT_ value.
 	 */
 	{ "edsa", DLT_DSA_TAG_EDSA },
@@ -5541,7 +5541,7 @@ static struct dsa_proto {
 	{ "lan937x", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0x8100; the VID can be interpreted
+	 * Type 2, with EtherType 0x8100; the VID can be interpreted
 	 * as per
 	 *
 	 *    https://elixir.bootlin.com/linux/v6.13.2/source/net/dsa/tag_lan9303.c#L24
@@ -5552,7 +5552,7 @@ static struct dsa_proto {
 	{ "lan9303", DLT_EN10MB },
 
 	/*
-	 * Type 2, without an Etherype at he beginning,
+	 * Type 2, without an EtherType at the beginning,
 	 * should be assigned a LINKTYPE_/DLT_ value.
 	 *
 	 * See
@@ -5562,7 +5562,7 @@ static struct dsa_proto {
 	{ "mtk", DLT_EN10MB },
 
 	/*
-	 * None is special and indicates that the interface does not have
+	 * The string "none" indicates that the interface does not have
 	 * any tagging protocol configured, and is therefore a standard
 	 * Ethernet interface.
 	 */
@@ -5587,7 +5587,7 @@ static struct dsa_proto {
 	{ "seville", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0x8100; the VID can be interpreted
+	 * Type 2, with EtherType 0x8100; the VID can be interpreted
 	 * as per
 	 *
 	 *    https://elixir.bootlin.com/linux/v6.13.2/source/net/dsa/tag_8021q.c#L15
@@ -5598,7 +5598,7 @@ static struct dsa_proto {
 	{ "ocelot-8021q", DLT_EN10MB },
 
 	/*
-	 * Type 2, without an Etherype at he beginning,
+	 * Type 2, without an EtherType at the beginning,
 	 * should be assigned a LINKTYPE_/DLT_ value.
 	 *
 	 * See
@@ -5608,14 +5608,14 @@ static struct dsa_proto {
 	{ "qca", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0x8899, assigned to Realtek;
+	 * Type 2, with EtherType 0x8899, assigned to Realtek;
 	 * they use it for several on-the-Ethernet protocols
 	 * as well, but there are fields that allow the two
 	 * tag formats, and all the protocols in question,
 	 * to be distinguiished from one another.
 	 *
-	 * This doies not require a LINKTYPE_/DLT_ value, it
-	 * just requires that Ethertype 0x8899 be dissected
+	 * This does not require a LINKTYPE_/DLT_ value, it
+	 * just requires that EtherType 0x8899 be dissected
 	 * properly.
 	 *
 	 * See
@@ -5630,7 +5630,7 @@ static struct dsa_proto {
 	{ "rtl4a", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0x8899, assigned to Realtek;
+	 * Type 2, with EtherType 0x8899, assigned to Realtek;
 	 * see above.
 	 */
 	{ "rtl8_4", DLT_EN10MB },
@@ -5641,8 +5641,8 @@ static struct dsa_proto {
 	{ "rtl8_4t", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0xe001; that's probably
-	 * self-assigned, so this really should ahve its
+	 * Type 2, with EtherType 0xe001; that's probably
+	 * self-assigned, so this really should have its
 	 * own LINKTYPE_/DLT_ value.
 	 *
 	 * See
@@ -5652,8 +5652,8 @@ static struct dsa_proto {
 	{ "a5psw", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0x8100 or the self-assigned
-	 * 0xdadb, so this really should ahve its own
+	 * Type 2, with EtherType 0x8100 or the self-assigned
+	 * 0xdadb, so this really should have its own
 	 * LINKTYPE_/DLT_ value; that would also allow the
 	 * VID of the tag to be dissected as per
 	 *
@@ -5664,7 +5664,7 @@ static struct dsa_proto {
 	/*
 	 * Type "none of the above", with both a header and trailer,
 	 * with different transmit and receive tags.  Has
-	 * Ethertype 0xdadc, which is probably self-assigned.
+	 * EtherType 0xdadc, which is probably self-assigned.
 	 * This should really have its own LINKTYPE_/DLT_ value.
 	 */
 	{ "sja1110", DLT_EN10MB },
@@ -5679,7 +5679,7 @@ static struct dsa_proto {
 	{ "trailer", DLT_EN10MB },
 
 	/*
-	 * Type 2, with Ethertype 0x8100; the VID can be interpreted
+	 * Type 2, with EtherType 0x8100; the VID can be interpreted
 	 * as per
 	 *
 	 *    https://elixir.bootlin.com/linux/v6.13.2/source/net/dsa/tag_8021q.c#L15
@@ -5821,6 +5821,62 @@ iface_get_arptype(int fd, const char *device, char *ebuf)
 	return ifr.ifr_hwaddr.sa_family;
 }
 
+/*
+ * In a DLT_CAN_SOCKETCAN frame the first four bytes are a 32-bit integer
+ * value in host byte order if the filter program is running in the kernel and
+ * in network byte order if in userland.  This applies to both CC, FD and XL
+ * frames, see pcap_handle_packet_mmap() for the rationale.  Return 1 iff the
+ * [possibly modified] filter program can work correctly in the kernel.
+ */
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+static int
+fix_dlt_can_socketcan(const u_int len, struct bpf_insn insn[])
+{
+	for (u_int i = 0; i < len; ++i) {
+		switch (insn[i].code) {
+		case BPF_LD|BPF_B|BPF_ABS: // ldb [k]
+		case BPF_LDX|BPF_MSH|BPF_B: // ldxb 4*([k]&0xf)
+			if (insn[i].k < 4)
+				insn[i].k = 3 - insn[i].k; // Fixed now.
+			break;
+		case BPF_LD|BPF_H|BPF_ABS: // ldh [k]
+		case BPF_LD|BPF_W|BPF_ABS: // ld [k]
+			/*
+			 * A halfword or a word load cannot be fixed by just
+			 * changing k, even if every required byte is within
+			 * the byte-swapped part of the frame, even if the
+			 * load is aligned.  The fix would require either
+			 * rewriting the filter program extensively or
+			 * generating it differently in the first place.
+			 */
+		case BPF_LD|BPF_B|BPF_IND: // ldb [x + k]
+		case BPF_LD|BPF_H|BPF_IND: // ldh [x + k]
+		case BPF_LD|BPF_W|BPF_IND: // ld [x + k]
+			/*
+			 * In addition to the above, a variable offset load
+			 * cannot be fixed because x can have any value, thus
+			 * x + k can have any value, but only the first four
+			 * bytes are swapped.  An easy way to demonstrate it
+			 * is to compile "link[link[4]] == 0", which will use
+			 * "ldb [x + 0]" to access one of the first four bytes
+			 * of the frame iff CAN CC/FD payload length is less
+			 * than 4.
+			 */
+			if (insn[i].k < 4)
+				return 0; // Userland filtering only.
+			break;
+		}
+	}
+	return 1;
+}
+#else
+static int
+fix_dlt_can_socketcan(const u_int len _U_, struct bpf_insn insn[] _U_)
+{
+	return 1;
+}
+#endif // __BYTE_ORDER == __LITTLE_ENDIAN
+
 static int
 fix_program(pcap_t *handle, struct sock_fprog *fcode)
 {
@@ -5846,6 +5902,17 @@ fix_program(pcap_t *handle, struct sock_fprog *fcode)
 	memcpy(f, handle->fcode.bf_insns, prog_size);
 	fcode->len = len;
 	fcode->filter = (struct sock_filter *) f;
+
+	switch (handle->linktype) {
+	case DLT_CAN_SOCKETCAN:
+		/*
+		 * If a similar fix needs to be done for CAN frames that
+		 * appear on the "any" pseudo-interface, it needs to be done
+		 * differently because that would be within DLT_LINUX_SLL or
+		 * DLT_LINUX_SLL2.
+		 */
+		return fix_dlt_can_socketcan(len, f);
+	}
 
 	for (i = 0; i < len; ++i) {
 		p = &f[i];
