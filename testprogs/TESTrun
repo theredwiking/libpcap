@@ -256,6 +256,10 @@ sub skip_no_ethers_casecmp {
 		# pcap_ether_hostton() uses strcmp().
 		skip_musl_libc ||
 		skip_os ('haiku') ||
+		# On illumos and possibly Solaris 11.4 ether_hostton() initially
+		# fails to find any upper-case hostnames, then after a few minutes
+		# it finds some or all of them, or sometimes it does not.
+		skip_os ('solaris') ||
 		# ether_hostton() uses strcmp().
 		skip_os ('freebsd') ||
 		skip_os ('netbsd') ||
@@ -789,6 +793,531 @@ my @accept_blocks = (
 			(003) ret      #0
 			',
 	}, # ifindex_linuxext
+
+	{
+		name => 'pflog_ifname',
+		DLT => 'PFLOG',
+		aliases => [
+			'ifname testname1',
+			'on testname1',
+		],
+		unopt => '
+			(000) ld       [9]
+			(001) jeq      #0x616d6531      jt 2	jf 7
+			(002) ld       [5]
+			(003) jeq      #0x6573746e      jt 4	jf 7
+			(004) ldb      [4]
+			(005) jeq      #0x74            jt 6	jf 7
+			(006) ret      #262144
+			(007) ret      #0
+			',
+	}, # pflog_ifname
+	{
+		name => 'pflog_rnr',
+		DLT => 'PFLOG',
+		aliases => [
+			'rnr 0x456789',
+			'rulenum 0x456789',
+		],
+		unopt => '
+			(000) ld       [36]
+			(001) jeq      #0x456789        jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_rnr
+	{
+		name => 'pflog_reason_match',
+		DLT => 'PFLOG',
+		aliases => ['reason match'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x0             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_match
+	{
+		name => 'pflog_reason_bad_offset',
+		DLT => 'PFLOG',
+		aliases => ['reason bad-offset'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x1             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_bad_offset
+	{
+		name => 'pflog_reason_fragment',
+		DLT => 'PFLOG',
+		aliases => ['reason fragment'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x2             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_fragment
+	{
+		name => 'pflog_reason_short',
+		DLT => 'PFLOG',
+		aliases => ['reason short'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x3             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_short
+	{
+		name => 'pflog_reason_normalize',
+		DLT => 'PFLOG',
+		aliases => ['reason normalize'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x4             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_normalize
+	{
+		name => 'pflog_reason_memory',
+		DLT => 'PFLOG',
+		aliases => ['reason memory'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x5             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_memory
+	{
+		name => 'pflog_reason_bad_timestamp',
+		DLT => 'PFLOG',
+		aliases => ['reason bad-timestamp'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x6             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_bad_timestamp
+	{
+		name => 'pflog_reason_congestion',
+		DLT => 'PFLOG',
+		aliases => ['reason congestion'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x7             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_congestion
+	{
+		name => 'pflog_reason_ip_option',
+		DLT => 'PFLOG',
+		aliases => ['reason ip-option'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x8             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_ip_option
+	{
+		name => 'pflog_reason_proto_cksum',
+		DLT => 'PFLOG',
+		aliases => ['reason proto-cksum'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x9             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_proto_cksum
+	{
+		name => 'pflog_reason_state_mismatch',
+		DLT => 'PFLOG',
+		aliases => ['reason state-mismatch'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xa             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_state_mismatch
+	{
+		name => 'pflog_reason_state_insert',
+		DLT => 'PFLOG',
+		aliases => ['reason state-insert'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xb             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_state_insert
+	{
+		name => 'pflog_reason_state_limit',
+		DLT => 'PFLOG',
+		aliases => ['reason state-limit'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xc             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_state_limit
+	{
+		name => 'pflog_reason_src_limit',
+		DLT => 'PFLOG',
+		aliases => ['reason src-limit'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xd             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_src_limit
+	{
+		name => 'pflog_reason_synproxy',
+		DLT => 'PFLOG',
+		aliases => ['reason synproxy'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xe             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_synproxy
+	{
+		name => 'pflog_reason_map_failed',
+		skip => skip_os_not ('freebsd'),
+		DLT => 'PFLOG',
+		aliases => ['reason map-failed'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xf             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_map_failed
+	{
+		name => 'pflog_reason_state_locked',
+		skip => skip_os_not ('netbsd'),
+		DLT => 'PFLOG',
+		aliases => ['reason state-locked'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xf             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_state_locked
+	{
+		name => 'pflog_reason_translate',
+		skip => skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['reason translate'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xf             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_translate
+	{
+		name => 'pflog_reason_no_route',
+		skip => skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['reason no-route'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0x10            jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_no_route
+	{
+		name => 'pflog_reason_dummynet',
+		skip => skip_os_not ('darwin'),
+		DLT => 'PFLOG',
+		aliases => ['reason dummynet'],
+		unopt => '
+			(000) ldb      [3]
+			(001) jeq      #0xf             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_reason_dummynet
+	{
+		name => 'pflog_rset',
+		DLT => 'PFLOG',
+		aliases => [
+			'rset testruleset2',
+			'ruleset testruleset2',
+		],
+		unopt => '
+			(000) ld       [28]
+			(001) jeq      #0x73657432      jt 2	jf 7
+			(002) ld       [24]
+			(003) jeq      #0x72756c65      jt 4	jf 7
+			(004) ld       [20]
+			(005) jeq      #0x74657374      jt 6	jf 7
+			(006) ret      #262144
+			(007) ret      #0
+			',
+	}, # pflog_rset
+	{
+		name => 'pflog_srnr',
+		DLT => 'PFLOG',
+		aliases => [
+			'srnr 123',
+			'subrulenum 123',
+		],
+		unopt => '
+			(000) ld       [40]
+			(001) jeq      #0x7b            jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_srnr
+	{
+		name => 'pflog_action_pass',
+		DLT => 'PFLOG',
+		aliases => [
+			'action pass',
+			'action accept',
+		],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x0             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_pass
+	{
+		name => 'pflog_action_block',
+		DLT => 'PFLOG',
+		aliases => [
+			'action block',
+			'action drop',
+		],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x1             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_block
+	{
+		name => 'pflog_action_scrub',
+		DLT => 'PFLOG',
+		aliases => ['action scrub'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x2             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_scrub
+	{
+		name => 'pflog_action_noscrub',
+		DLT => 'PFLOG',
+		aliases => ['action noscrub'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x3             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_noscrub
+	{
+		name => 'pflog_action_nat',
+		DLT => 'PFLOG',
+		aliases => ['action nat'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x4             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nat
+	{
+		name => 'pflog_action_nonat',
+		DLT => 'PFLOG',
+		aliases => ['action nonat'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x5             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nonat
+	{
+		name => 'pflog_action_binat',
+		DLT => 'PFLOG',
+		aliases => ['action binat'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x6             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_binat
+	{
+		name => 'pflog_action_nobinat',
+		DLT => 'PFLOG',
+		aliases => ['action nobinat'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x7             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nobinat
+	{
+		name => 'pflog_action_rdr',
+		DLT => 'PFLOG',
+		aliases => ['action rdr'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x8             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_rdr
+	{
+		name => 'pflog_action_nordr',
+		DLT => 'PFLOG',
+		aliases => ['action nordr'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0x9             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nordr
+	{
+		name => 'pflog_action_synproxy_drop',
+		DLT => 'PFLOG',
+		aliases => ['action synproxy-drop'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xa             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_synproxy_drop
+	{
+		name => 'pflog_action_defer',
+		skip => skip_os_not ('freebsd') && skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['action defer'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xb             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_defer
+	{
+		name => 'pflog_action_match',
+		skip => skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['action match'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xc             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_match
+	{
+		name => 'pflog_action_divert',
+		skip => skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['action divert'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xd             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_divert
+	{
+		name => 'pflog_action_rt',
+		skip => skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['action rt'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xe             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_rt
+	{
+		name => 'pflog_action_afrt',
+		skip => skip_os_not ('openbsd'),
+		DLT => 'PFLOG',
+		aliases => ['action afrt'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xf             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_afrt
+	{
+		name => 'pflog_action_dummynet',
+		skip => skip_os_not ('darwin'),
+		DLT => 'PFLOG',
+		aliases => ['action dummynet'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xb             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_dummynet
+	{
+		name => 'pflog_action_nodummynet',
+		skip => skip_os_not ('darwin'),
+		DLT => 'PFLOG',
+		aliases => ['action nodummynet'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xc             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nodummynet
+	{
+		name => 'pflog_action_nat64',
+		skip => skip_os_not ('darwin'),
+		DLT => 'PFLOG',
+		aliases => ['action nat64'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xd             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nat64
+	{
+		name => 'pflog_action_nonat64',
+		skip => skip_os_not ('darwin'),
+		DLT => 'PFLOG',
+		aliases => ['action nonat64'],
+		unopt => '
+			(000) ldb      [2]
+			(001) jeq      #0xe             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # pflog_action_nonat64
 
 	{
 		name => 'mtp2_fisu',
@@ -2146,6 +2675,22 @@ my @accept_blocks = (
 			(003) ret      #0
 			',
 	}, # ip_over_fc_multicast
+	{
+		name => 'atm_multicast',
+		DLT => 'SUNATM',
+		aliases => ['lane and multicast'],
+		opt => '
+			(000) ldb      [0]
+			(001) and      #0xf
+			(002) jeq      #0x1             jt 3	jf 8
+			(003) ldh      [4]
+			(004) jeq      #0xff00          jt 8	jf 5
+			(005) ldb      [6]
+			(006) jset     #0x1             jt 7	jf 8
+			(007) ret      #262144
+			(008) ret      #0
+			',
+	}, # atm_multicast
 
 	{
 		name => 'ether_broadcast',
@@ -3500,7 +4045,7 @@ my @accept_blocks = (
 	}, # rarp_net_name
 	{
 		name => 'arp_net_NAME',
-		skip => skip_no_networks(),
+		skip => skip_no_networks_casecmp(),
 		DLT => 'SUNATM',
 		aliases => [
 			'arp net NET-10-0-0-0.LIBPCAP.TEST',
@@ -3522,7 +4067,7 @@ my @accept_blocks = (
 	}, # arp_net_NAME
 	{
 		name => 'rarp_net_NAME',
-		skip => skip_no_networks(),
+		skip => skip_no_networks_casecmp(),
 		DLT => 'ARCNET',
 		aliases => [
 			'rarp net NET-10-0-0-0.LIBPCAP.TEST',
@@ -3735,6 +4280,408 @@ my @accept_blocks = (
 			(006) ret      #0
 			',
 	}, # mpls_ppp_unary
+
+	{
+		name => 'vxlan_nullary',
+		DLT => 'EN10MB',
+		aliases => ['vxlan'],
+		opt => '
+			(000) ldh      [12]
+			(001) jeq      #0x800           jt 2	jf 13
+			(002) ldb      [23]
+			(003) jeq      #0x11            jt 4	jf 21
+			(004) ldh      [20]
+			(005) jset     #0x1fff          jt 21	jf 6
+			(006) ldxb     4*([14]&0xf)
+			(007) ldh      [x + 16]
+			(008) jeq      #0x12b5          jt 9	jf 21
+			(009) ldb      [x + 22]
+			(010) jeq      #0x8             jt 11	jf 21
+			(011) txa
+			(012) jeq      x                jt 20	jf 21
+			(013) jeq      #0x86dd          jt 14	jf 21
+			(014) ldb      [20]
+			(015) jeq      #0x11            jt 16	jf 21
+			(016) ldh      [56]
+			(017) jeq      #0x12b5          jt 18	jf 21
+			(018) ldb      [62]
+			(019) jeq      #0x8             jt 20	jf 21
+			(020) ret      #262144
+			(021) ret      #0
+			',
+	}, # vxlan_nullary
+	{
+		name => 'vxlan_unary',
+		DLT => 'EN10MB',
+		aliases => ['vxlan 12345'],
+		opt => '
+			(000) ldh      [12]
+			(001) jeq      #0x800           jt 2	jf 16
+			(002) ldb      [23]
+			(003) jeq      #0x11            jt 4	jf 27
+			(004) ldh      [20]
+			(005) jset     #0x1fff          jt 27	jf 6
+			(006) ldxb     4*([14]&0xf)
+			(007) ldh      [x + 16]
+			(008) jeq      #0x12b5          jt 9	jf 27
+			(009) ldb      [x + 22]
+			(010) jeq      #0x8             jt 11	jf 27
+			(011) ld       [x + 26]
+			(012) and      #0xffffff00
+			(013) jeq      #0x303900        jt 14	jf 27
+			(014) txa
+			(015) jeq      x                jt 26	jf 27
+			(016) jeq      #0x86dd          jt 17	jf 27
+			(017) ldb      [20]
+			(018) jeq      #0x11            jt 19	jf 27
+			(019) ldh      [56]
+			(020) jeq      #0x12b5          jt 21	jf 27
+			(021) ldb      [62]
+			(022) jeq      #0x8             jt 23	jf 27
+			(023) ld       [66]
+			(024) and      #0xffffff00
+			(025) jeq      #0x303900        jt 26	jf 27
+			(026) ret      #262144
+			(027) ret      #0
+			',
+	}, # vxlan_unary
+	{
+		name => 'vxlan_and_vxlan',
+		DLT => 'EN10MB',
+		aliases => ['vxlan and vxlan'],
+		opt => '
+			(000) ldh      [12]
+			(001) jeq      #0x800           jt 2	jf 13
+			(002) ldb      [23]
+			(003) jeq      #0x11            jt 4	jf 75
+			(004) ldh      [20]
+			(005) jset     #0x1fff          jt 75	jf 6
+			(006) ldxb     4*([14]&0xf)
+			(007) ldh      [x + 16]
+			(008) jeq      #0x12b5          jt 9	jf 75
+			(009) ldb      [x + 22]
+			(010) jeq      #0x8             jt 11	jf 75
+			(011) txa
+			(012) jeq      x                jt 23	jf 75
+			(013) jeq      #0x86dd          jt 14	jf 75
+			(014) ldb      [20]
+			(015) jeq      #0x11            jt 16	jf 75
+			(016) ldh      [56]
+			(017) jeq      #0x12b5          jt 18	jf 75
+			(018) ldb      [62]
+			(019) jeq      #0x8             jt 20	jf 75
+			(020) ldx      #0x28
+			(021) txa
+			(022) jeq      #0x28            jt 23	jf 23
+			(023) add      #22
+			(024) add      #8
+			(025) add      #12
+			(026) st       M[1]
+			(027) add      #2
+			(028) tax
+			(029) stx      M[2]
+			(030) ld       #0x0
+			(031) jeq      #0x0             jt 32	jf 32
+			(032) ldx      M[1]
+			(033) ldh      [x + 0]
+			(034) jeq      #0x800           jt 35	jf 62
+			(035) ldx      M[2]
+			(036) ldb      [x + 9]
+			(037) jeq      #0x11            jt 38	jf 75
+			(038) ldh      [x + 6]
+			(039) jset     #0x1fff          jt 75	jf 40
+			(040) ldb      [x + 0]
+			(041) and      #0xf
+			(042) lsh      #2
+			(043) add      x
+			(044) tax
+			(045) ldh      [x + 2]
+			(046) jeq      #0x12b5          jt 47	jf 75
+			(047) ldx      M[2]
+			(048) ldb      [x + 0]
+			(049) and      #0xf
+			(050) lsh      #2
+			(051) add      x
+			(052) tax
+			(053) ldb      [x + 8]
+			(054) jeq      #0x8             jt 55	jf 75
+			(055) ldx      M[2]
+			(056) ldb      [x + 0]
+			(057) and      #0xf
+			(058) lsh      #2
+			(059) add      x
+			(060) tax
+			(061) jeq      x                jt 74	jf 75
+			(062) jeq      #0x86dd          jt 63	jf 75
+			(063) ldx      M[2]
+			(064) ldb      [x + 6]
+			(065) jeq      #0x11            jt 66	jf 75
+			(066) ldh      [x + 42]
+			(067) jeq      #0x12b5          jt 68	jf 75
+			(068) ldb      [x + 48]
+			(069) jeq      #0x8             jt 70	jf 75
+			(070) ld       #0x28
+			(071) add      x
+			(072) tax
+			(073) jeq      x                jt 74	jf 75
+			(074) ret      #262144
+			(075) ret      #0
+			',
+	}, # vxlan_and_vxlan
+	{
+		name => 'geneve_nullary',
+		DLT => 'EN10MB',
+		aliases => ['geneve'],
+		unopt => '
+			(000) ldh      [12]
+			(001) jeq      #0x800           jt 2	jf 16
+			(002) ldb      [23]
+			(003) jeq      #0x11            jt 4	jf 16
+			(004) ldh      [20]
+			(005) jset     #0x1fff          jt 16	jf 6
+			(006) ldxb     4*([14]&0xf)
+			(007) ldh      [x + 16]
+			(008) jeq      #0x17c1          jt 9	jf 16
+			(009) ldxb     4*([14]&0xf)
+			(010) ldb      [x + 22]
+			(011) and      #0xc0
+			(012) jeq      #0x0             jt 13	jf 16
+			(013) ldxb     4*([14]&0xf)
+			(014) txa
+			(015) jeq      x                jt 28	jf 16
+			(016) ldh      [12]
+			(017) jeq      #0x86dd          jt 18	jf 50
+			(018) ldb      [20]
+			(019) jeq      #0x11            jt 20	jf 50
+			(020) ldh      [56]
+			(021) jeq      #0x17c1          jt 22	jf 50
+			(022) ldb      [62]
+			(023) and      #0xc0
+			(024) jeq      #0x0             jt 25	jf 50
+			(025) ld       #0x28
+			(026) tax
+			(027) jeq      x                jt 28	jf 50
+			(028) add      #22
+			(029) tax
+			(030) add      #2
+			(031) st       M[0]
+			(032) ldb      [x + 0]
+			(033) and      #0x3f
+			(034) mul      #4
+			(035) add      #8
+			(036) add      x
+			(037) st       M[1]
+			(038) ldh      [x + 2]
+			(039) ldx      M[1]
+			(040) jeq      #0x6558          jt 41	jf 46
+			(041) txa
+			(042) add      #12
+			(043) st       M[0]
+			(044) add      #2
+			(045) tax
+			(046) stx      M[2]
+			(047) ld       #0x0
+			(048) jeq      #0x0             jt 49	jf 50
+			(049) ret      #262144
+			(050) ret      #0
+			',
+	}, # geneve_nullary
+	{
+		name => 'geneve_unary',
+		DLT => 'EN10MB',
+		aliases => ['geneve 12345'],
+		unopt => '
+			(000) ldh      [12]
+			(001) jeq      #0x800           jt 2	jf 20
+			(002) ldb      [23]
+			(003) jeq      #0x11            jt 4	jf 20
+			(004) ldh      [20]
+			(005) jset     #0x1fff          jt 20	jf 6
+			(006) ldxb     4*([14]&0xf)
+			(007) ldh      [x + 16]
+			(008) jeq      #0x17c1          jt 9	jf 20
+			(009) ldxb     4*([14]&0xf)
+			(010) ldb      [x + 22]
+			(011) and      #0xc0
+			(012) jeq      #0x0             jt 13	jf 20
+			(013) ldxb     4*([14]&0xf)
+			(014) ld       [x + 26]
+			(015) and      #0xffffff00
+			(016) jeq      #0x303900        jt 17	jf 20
+			(017) ldxb     4*([14]&0xf)
+			(018) txa
+			(019) jeq      x                jt 35	jf 20
+			(020) ldh      [12]
+			(021) jeq      #0x86dd          jt 22	jf 57
+			(022) ldb      [20]
+			(023) jeq      #0x11            jt 24	jf 57
+			(024) ldh      [56]
+			(025) jeq      #0x17c1          jt 26	jf 57
+			(026) ldb      [62]
+			(027) and      #0xc0
+			(028) jeq      #0x0             jt 29	jf 57
+			(029) ld       [66]
+			(030) and      #0xffffff00
+			(031) jeq      #0x303900        jt 32	jf 57
+			(032) ld       #0x28
+			(033) tax
+			(034) jeq      x                jt 35	jf 57
+			(035) add      #22
+			(036) tax
+			(037) add      #2
+			(038) st       M[0]
+			(039) ldb      [x + 0]
+			(040) and      #0x3f
+			(041) mul      #4
+			(042) add      #8
+			(043) add      x
+			(044) st       M[1]
+			(045) ldh      [x + 2]
+			(046) ldx      M[1]
+			(047) jeq      #0x6558          jt 48	jf 53
+			(048) txa
+			(049) add      #12
+			(050) st       M[0]
+			(051) add      #2
+			(052) tax
+			(053) stx      M[2]
+			(054) ld       #0x0
+			(055) jeq      #0x0             jt 56	jf 57
+			(056) ret      #262144
+			(057) ret      #0
+			',
+	}, # geneve_unary
+	{
+		name => 'geneve_and_geneve',
+		DLT => 'EN10MB',
+		aliases => ['geneve and geneve'],
+		unopt => '
+			(000) ldh      [12]
+			(001) jeq      #0x800           jt 2	jf 16
+			(002) ldb      [23]
+			(003) jeq      #0x11            jt 4	jf 16
+			(004) ldh      [20]
+			(005) jset     #0x1fff          jt 16	jf 6
+			(006) ldxb     4*([14]&0xf)
+			(007) ldh      [x + 16]
+			(008) jeq      #0x17c1          jt 9	jf 16
+			(009) ldxb     4*([14]&0xf)
+			(010) ldb      [x + 22]
+			(011) and      #0xc0
+			(012) jeq      #0x0             jt 13	jf 16
+			(013) ldxb     4*([14]&0xf)
+			(014) txa
+			(015) jeq      x                jt 28	jf 16
+			(016) ldh      [12]
+			(017) jeq      #0x86dd          jt 18	jf 123
+			(018) ldb      [20]
+			(019) jeq      #0x11            jt 20	jf 123
+			(020) ldh      [56]
+			(021) jeq      #0x17c1          jt 22	jf 123
+			(022) ldb      [62]
+			(023) and      #0xc0
+			(024) jeq      #0x0             jt 25	jf 123
+			(025) ld       #0x28
+			(026) tax
+			(027) jeq      x                jt 28	jf 123
+			(028) add      #22
+			(029) tax
+			(030) add      #2
+			(031) st       M[0]
+			(032) ldb      [x + 0]
+			(033) and      #0x3f
+			(034) mul      #4
+			(035) add      #8
+			(036) add      x
+			(037) st       M[1]
+			(038) ldh      [x + 2]
+			(039) ldx      M[1]
+			(040) jeq      #0x6558          jt 41	jf 46
+			(041) txa
+			(042) add      #12
+			(043) st       M[0]
+			(044) add      #2
+			(045) tax
+			(046) stx      M[2]
+			(047) ld       #0x0
+			(048) jeq      #0x0             jt 49	jf 123
+			(049) ldx      M[0]
+			(050) ldh      [x + 0]
+			(051) jeq      #0x800           jt 52	jf 83
+			(052) ldx      M[2]
+			(053) ldb      [x + 9]
+			(054) jeq      #0x11            jt 55	jf 83
+			(055) ldx      M[2]
+			(056) ldh      [x + 6]
+			(057) jset     #0x1fff          jt 83	jf 58
+			(058) ldx      M[2]
+			(059) ldb      [x + 0]
+			(060) and      #0xf
+			(061) lsh      #2
+			(062) add      x
+			(063) tax
+			(064) ldh      [x + 2]
+			(065) jeq      #0x17c1          jt 66	jf 83
+			(066) ldx      M[2]
+			(067) ldb      [x + 0]
+			(068) and      #0xf
+			(069) lsh      #2
+			(070) add      x
+			(071) tax
+			(072) ldb      [x + 8]
+			(073) and      #0xc0
+			(074) jeq      #0x0             jt 75	jf 83
+			(075) ldx      M[2]
+			(076) ldb      [x + 0]
+			(077) and      #0xf
+			(078) lsh      #2
+			(079) add      x
+			(080) tax
+			(081) txa
+			(082) jeq      x                jt 101	jf 83
+			(083) ldx      M[0]
+			(084) ldh      [x + 0]
+			(085) jeq      #0x86dd          jt 86	jf 123
+			(086) ldx      M[2]
+			(087) ldb      [x + 6]
+			(088) jeq      #0x11            jt 89	jf 123
+			(089) ldx      M[2]
+			(090) ldh      [x + 42]
+			(091) jeq      #0x17c1          jt 92	jf 123
+			(092) ldx      M[2]
+			(093) ldb      [x + 48]
+			(094) and      #0xc0
+			(095) jeq      #0x0             jt 96	jf 123
+			(096) ldx      M[2]
+			(097) ld       #0x28
+			(098) add      x
+			(099) tax
+			(100) jeq      x                jt 101	jf 123
+			(101) add      #8
+			(102) tax
+			(103) add      #2
+			(104) st       M[3]
+			(105) ldb      [x + 0]
+			(106) and      #0x3f
+			(107) mul      #4
+			(108) add      #8
+			(109) add      x
+			(110) st       M[4]
+			(111) ldh      [x + 2]
+			(112) ldx      M[4]
+			(113) jeq      #0x6558          jt 114	jf 119
+			(114) txa
+			(115) add      #12
+			(116) st       M[3]
+			(117) add      #2
+			(118) tax
+			(119) stx      M[5]
+			(120) ld       #0x0
+			(121) jeq      #0x0             jt 122	jf 123
+			(122) ret      #262144
+			(123) ret      #0
+			',
+	}, # geneve_and_geneve
 
 	{
 		name => 'wlan_host',
@@ -5753,31 +6700,131 @@ my @accept_blocks = (
 			(007) ret      #0
 			',
 	}, # iso_proto_isis
+	# Test the DLT dimension of "iso proto" for one alias only.
+	{
+		name => 'iso_proto_clnp_FRELAY',
+		DLT => 'FRELAY',
+		aliases => ['iso proto \clnp'],
+		unopt => '
+			(000) ldh      [2]
+			(001) jeq      #0x381           jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
+			',
+	}, # clnp_FRELAY
+	{
+		name => 'iso_proto_clnp_C_HDLC',
+		DLT => 'C_HDLC',
+		aliases => ['iso proto \clnp'],
+		unopt => '
+			(000) ldh      [2]
+			(001) jeq      #0xfefe          jt 2	jf 5
+			(002) ldb      [5]
+			(003) jeq      #0x81            jt 4	jf 5
+			(004) ret      #262144
+			(005) ret      #0
+			',
+	}, # clnp_C_HDLC
 	{
 		name => 'isis_l1',
 		DLT => 'EN10MB',
-		aliases => ['l1'],
+		aliases => [
+			'l1',
+			'isis proto 0x1a or 0x18 or 0x12 or 0x0f or 0x11',
+		],
 		opt => '
 			(000) ldh      [12]
-			(001) jgt      #0x5dc           jt 13	jf 2
+			(001) jgt      #0x5dc           jt 22	jf 2
 			(002) ldh      [14]
-			(003) jeq      #0xfefe          jt 4	jf 13
+			(003) jeq      #0xfefe          jt 4	jf 22
 			(004) ldb      [17]
-			(005) jeq      #0x83            jt 6	jf 13
+			(005) jeq      #0x83            jt 6	jf 22
 			(006) ldb      [21]
-			(007) jeq      #0x1a            jt 12	jf 8
-			(008) jeq      #0x18            jt 12	jf 9
-			(009) jeq      #0x12            jt 12	jf 10
-			(010) jeq      #0xf             jt 12	jf 11
-			(011) jeq      #0x11            jt 12	jf 13
-			(012) ret      #262144
-			(013) ret      #0
+			(007) and      #0x1f
+			(008) jeq      #0x1a            jt 21	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0x18            jt 21	jf 12
+			(012) ldb      [21]
+			(013) and      #0x1f
+			(014) jeq      #0x12            jt 21	jf 15
+			(015) ldb      [21]
+			(016) and      #0x1f
+			(017) jeq      #0xf             jt 21	jf 18
+			(018) ldb      [21]
+			(019) and      #0x1f
+			(020) jeq      #0x11            jt 21	jf 22
+			(021) ret      #262144
+			(022) ret      #0
 			',
 	}, # isis_l1
 	{
 		name => 'isis_l2',
 		DLT => 'EN10MB',
-		aliases => ['l2'],
+		aliases => [
+			'l2',
+			'isis proto 0x1b or 0x19 or 0x14 or 0x10 or 0x11',
+		],
+		opt => '
+			(000) ldh      [12]
+			(001) jgt      #0x5dc           jt 22	jf 2
+			(002) ldh      [14]
+			(003) jeq      #0xfefe          jt 4	jf 22
+			(004) ldb      [17]
+			(005) jeq      #0x83            jt 6	jf 22
+			(006) ldb      [21]
+			(007) and      #0x1f
+			(008) jeq      #0x1b            jt 21	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0x19            jt 21	jf 12
+			(012) ldb      [21]
+			(013) and      #0x1f
+			(014) jeq      #0x14            jt 21	jf 15
+			(015) ldb      [21]
+			(016) and      #0x1f
+			(017) jeq      #0x10            jt 21	jf 18
+			(018) ldb      [21]
+			(019) and      #0x1f
+			(020) jeq      #0x11            jt 21	jf 22
+			(021) ret      #262144
+			(022) ret      #0
+			',
+	}, # isis_l2
+	{
+		name => 'isis_iih',
+		DLT => 'EN10MB',
+		aliases => [
+			'iih',
+			'isis proto 0x11 or 0x0f or 0x10',
+		],
+		opt => '
+			(000) ldh      [12]
+			(001) jgt      #0x5dc           jt 16	jf 2
+			(002) ldh      [14]
+			(003) jeq      #0xfefe          jt 4	jf 16
+			(004) ldb      [17]
+			(005) jeq      #0x83            jt 6	jf 16
+			(006) ldb      [21]
+			(007) and      #0x1f
+			(008) jeq      #0x11            jt 15	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0xf             jt 15	jf 12
+			(012) ldb      [21]
+			(013) and      #0x1f
+			(014) jeq      #0x10            jt 15	jf 16
+			(015) ret      #262144
+			(016) ret      #0
+			',
+	}, # isis_iih
+	{
+		name => 'isis_lsp',
+		DLT => 'EN10MB',
+		aliases => [
+			'lsp',
+			'isis proto 0x12 or 0x14',
+		],
 		opt => '
 			(000) ldh      [12]
 			(001) jgt      #0x5dc           jt 13	jf 2
@@ -5786,106 +6833,110 @@ my @accept_blocks = (
 			(004) ldb      [17]
 			(005) jeq      #0x83            jt 6	jf 13
 			(006) ldb      [21]
-			(007) jeq      #0x1b            jt 12	jf 8
-			(008) jeq      #0x19            jt 12	jf 9
-			(009) jeq      #0x14            jt 12	jf 10
-			(010) jeq      #0x10            jt 12	jf 11
-			(011) jeq      #0x11            jt 12	jf 13
+			(007) and      #0x1f
+			(008) jeq      #0x12            jt 12	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0x14            jt 12	jf 13
 			(012) ret      #262144
 			(013) ret      #0
 			',
-	}, # isis_l2
+	}, # isis_lsp
 	{
-		name => 'isis_iih',
-		DLT => 'EN10MB',
-		aliases => ['iih'],
+		name => 'isis_lsp_C_HDLC',
+		DLT => 'C_HDLC',
+		aliases => ['lsp'],
 		opt => '
-			(000) ldh      [12]
-			(001) jgt      #0x5dc           jt 11	jf 2
-			(002) ldh      [14]
-			(003) jeq      #0xfefe          jt 4	jf 11
-			(004) ldb      [17]
-			(005) jeq      #0x83            jt 6	jf 11
-			(006) ldb      [21]
-			(007) jeq      #0x11            jt 10	jf 8
-			(008) jeq      #0xf             jt 10	jf 9
-			(009) jeq      #0x10            jt 10	jf 11
+			(000) ldh      [2]
+			(001) jeq      #0xfefe          jt 2	jf 11
+			(002) ldb      [5]
+			(003) jeq      #0x83            jt 4	jf 11
+			(004) ldb      [9]
+			(005) and      #0x1f
+			(006) jeq      #0x12            jt 10	jf 7
+			(007) ldb      [9]
+			(008) and      #0x1f
+			(009) jeq      #0x14            jt 10	jf 11
 			(010) ret      #262144
 			(011) ret      #0
 			',
-	}, # isis_iih
-	{
-		name => 'isis_lsp',
-		DLT => 'EN10MB',
-		aliases => ['lsp'],
-		opt => '
-			(000) ldh      [12]
-			(001) jgt      #0x5dc           jt 10	jf 2
-			(002) ldh      [14]
-			(003) jeq      #0xfefe          jt 4	jf 10
-			(004) ldb      [17]
-			(005) jeq      #0x83            jt 6	jf 10
-			(006) ldb      [21]
-			(007) jeq      #0x12            jt 9	jf 8
-			(008) jeq      #0x14            jt 9	jf 10
-			(009) ret      #262144
-			(010) ret      #0
-			',
-	}, # isis_lsp
+	}, # isis_lsp_C_HDLC
 	{
 		name => 'isis_snp',
 		DLT => 'EN10MB',
-		aliases => ['snp'],
+		aliases => [
+			'snp',
+			'isis proto 0x1b or 0x1a or 0x18 or 0x19',
+		],
 		opt => '
 			(000) ldh      [12]
-			(001) jgt      #0x5dc           jt 12	jf 2
+			(001) jgt      #0x5dc           jt 19	jf 2
 			(002) ldh      [14]
-			(003) jeq      #0xfefe          jt 4	jf 12
+			(003) jeq      #0xfefe          jt 4	jf 19
 			(004) ldb      [17]
-			(005) jeq      #0x83            jt 6	jf 12
+			(005) jeq      #0x83            jt 6	jf 19
 			(006) ldb      [21]
-			(007) jeq      #0x1b            jt 11	jf 8
-			(008) jeq      #0x1a            jt 11	jf 9
-			(009) jeq      #0x18            jt 11	jf 10
-			(010) jeq      #0x19            jt 11	jf 12
-			(011) ret      #262144
-			(012) ret      #0
+			(007) and      #0x1f
+			(008) jeq      #0x1b            jt 18	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0x1a            jt 18	jf 12
+			(012) ldb      [21]
+			(013) and      #0x1f
+			(014) jeq      #0x18            jt 18	jf 15
+			(015) ldb      [21]
+			(016) and      #0x1f
+			(017) jeq      #0x19            jt 18	jf 19
+			(018) ret      #262144
+			(019) ret      #0
 			',
 	}, # isis_snp
 	{
 		name => 'isis_csnp',
 		DLT => 'EN10MB',
-		aliases => ['csnp'],
+		aliases => [
+			'csnp',
+			'isis proto 0x18 or 0x19',
+		],
 		opt => '
 			(000) ldh      [12]
-			(001) jgt      #0x5dc           jt 10	jf 2
+			(001) jgt      #0x5dc           jt 13	jf 2
 			(002) ldh      [14]
-			(003) jeq      #0xfefe          jt 4	jf 10
+			(003) jeq      #0xfefe          jt 4	jf 13
 			(004) ldb      [17]
-			(005) jeq      #0x83            jt 6	jf 10
+			(005) jeq      #0x83            jt 6	jf 13
 			(006) ldb      [21]
-			(007) jeq      #0x18            jt 9	jf 8
-			(008) jeq      #0x19            jt 9	jf 10
-			(009) ret      #262144
-			(010) ret      #0
+			(007) and      #0x1f
+			(008) jeq      #0x18            jt 12	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0x19            jt 12	jf 13
+			(012) ret      #262144
+			(013) ret      #0
 			',
 	}, # isis_csnp
 	{
 		name => 'isis_psnp',
 		DLT => 'EN10MB',
-		aliases => ['psnp'],
+		aliases => [
+			'psnp',
+			'isis proto 0x1a or 0x1b',
+		],
 		opt => '
 			(000) ldh      [12]
-			(001) jgt      #0x5dc           jt 10	jf 2
+			(001) jgt      #0x5dc           jt 13	jf 2
 			(002) ldh      [14]
-			(003) jeq      #0xfefe          jt 4	jf 10
+			(003) jeq      #0xfefe          jt 4	jf 13
 			(004) ldb      [17]
-			(005) jeq      #0x83            jt 6	jf 10
+			(005) jeq      #0x83            jt 6	jf 13
 			(006) ldb      [21]
-			(007) jeq      #0x1a            jt 9	jf 8
-			(008) jeq      #0x1b            jt 9	jf 10
-			(009) ret      #262144
-			(010) ret      #0
+			(007) and      #0x1f
+			(008) jeq      #0x1a            jt 12	jf 9
+			(009) ldb      [21]
+			(010) and      #0x1f
+			(011) jeq      #0x1b            jt 12	jf 13
+			(012) ret      #262144
+			(013) ret      #0
 			',
 	}, # isis_psnp
 
@@ -8707,6 +9758,16 @@ my @accept_blocks = (
 			'host ::1',
 			'src or dst host ::1',
 			'src or dst ::1',
+			# This syntax is not documented and seems to be an unintended edge case
+			# in the invocation of gen_mcode6() from the grammar.  It may become
+			# invalid syntax later, in which case the aliases below will need to be
+			# converted to reject tests.
+			'ip6 host ::1/128',
+			'ip6 src or dst host ::1/128',
+			'ip6 src or dst ::1/128',
+			'host ::1/128',
+			'src or dst host ::1/128',
+			'src or dst ::1/128',
 		],
 		opt => '
 			(000) ldb      [0]
@@ -8819,6 +9880,11 @@ my @accept_blocks = (
 			'ip6 src fe80::1122:33ff:fe44:5566',
 			'src host fe80::1122:33ff:fe44:5566',
 			'src fe80::1122:33ff:fe44:5566',
+			# same as above
+			'ip6 src host fe80::1122:33ff:fe44:5566/128',
+			'ip6 src fe80::1122:33ff:fe44:5566/128',
+			'src host fe80::1122:33ff:fe44:5566/128',
+			'src fe80::1122:33ff:fe44:5566/128',
 		],
 		opt => '
 			(000) ldb      [0]
@@ -8901,6 +9967,11 @@ my @accept_blocks = (
 			'ip6 dst fe80::7788:99ff:feaa:bbcc',
 			'dst host fe80::7788:99ff:feaa:bbcc',
 			'dst fe80::7788:99ff:feaa:bbcc',
+			# same as above
+			'ip6 dst host fe80::7788:99ff:feaa:bbcc/128',
+			'ip6 dst fe80::7788:99ff:feaa:bbcc/128',
+			'dst host fe80::7788:99ff:feaa:bbcc/128',
+			'dst fe80::7788:99ff:feaa:bbcc/128',
 		],
 		opt => '
 			(000) ldb      [0]
@@ -9155,6 +10226,18 @@ my @accept_blocks = (
 			'tcp port smtp',
 			'tcp src or dst port 25',
 			'tcp src or dst port smtp',
+			# degenerate "portrange"
+			'tcp portrange 25-25',
+			'tcp portrange 25-smtp',
+			'tcp portrange smtp-25',
+			'tcp portrange smtp-smtp',
+			'tcp portrange 25',
+			# "25" is a valid port range, but "smtp" is not.
+			'tcp src or dst portrange 25-25',
+			'tcp src or dst portrange 25-smtp',
+			'tcp src or dst portrange smtp-25',
+			'tcp src or dst portrange smtp-smtp',
+			'tcp src or dst portrange 25',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9185,6 +10268,12 @@ my @accept_blocks = (
 		aliases => [
 			'tcp src port 25',
 			'tcp src port smtp',
+			# degenerate "src portrange"
+			'tcp src portrange 25-25',
+			'tcp src portrange 25-smtp',
+			'tcp src portrange smtp-25',
+			'tcp src portrange smtp-smtp',
+			'tcp src portrange 25',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9211,6 +10300,12 @@ my @accept_blocks = (
 		aliases => [
 			'tcp dst port 25',
 			'tcp dst port smtp',
+			# degenerate "dst portrange"
+			'tcp dst portrange 25-25',
+			'tcp dst portrange 25-smtp',
+			'tcp dst portrange smtp-25',
+			'tcp dst portrange smtp-smtp',
+			'tcp dst portrange 25',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9344,108 +10439,6 @@ my @accept_blocks = (
 			(016) ret      #0
 			',
 	}, # tcp_dst_portrange
-	{
-		name => 'tcp_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'tcp portrange 25-25',
-			'tcp portrange 25-smtp',
-			'tcp portrange smtp-25',
-			'tcp portrange smtp-smtp',
-			'tcp portrange 25',
-			# "25" is a valid port range, but "smtp" is not.
-			'tcp src or dst portrange 25-25',
-			'tcp src or dst portrange 25-smtp',
-			'tcp src or dst portrange smtp-25',
-			'tcp src or dst portrange smtp-smtp',
-			'tcp src or dst portrange 25',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 9
-			(002) ldb      [20]
-			(003) jeq      #0x6             jt 4	jf 22
-			(004) ldh      [54]
-			(005) jge      #0x19            jt 6	jf 7
-			(006) jgt      #0x19            jt 7	jf 21
-			(007) ldh      [56]
-			(008) jge      #0x19            jt 20	jf 22
-			(009) jeq      #0x800           jt 10	jf 22
-			(010) ldb      [23]
-			(011) jeq      #0x6             jt 12	jf 22
-			(012) ldh      [20]
-			(013) jset     #0x1fff          jt 22	jf 14
-			(014) ldxb     4*([14]&0xf)
-			(015) ldh      [x + 14]
-			(016) jge      #0x19            jt 17	jf 18
-			(017) jgt      #0x19            jt 18	jf 21
-			(018) ldh      [x + 16]
-			(019) jge      #0x19            jt 20	jf 22
-			(020) jgt      #0x19            jt 22	jf 21
-			(021) ret      #262144
-			(022) ret      #0
-			',
-	}, # tcp_portrange_degenerate
-	{
-		name => 'tcp_src_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'tcp src portrange 25-25',
-			'tcp src portrange 25-smtp',
-			'tcp src portrange smtp-25',
-			'tcp src portrange smtp-smtp',
-			'tcp src portrange 25',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 6
-			(002) ldb      [20]
-			(003) jeq      #0x6             jt 4	jf 16
-			(004) ldh      [54]
-			(005) jge      #0x19            jt 14	jf 16
-			(006) jeq      #0x800           jt 7	jf 16
-			(007) ldb      [23]
-			(008) jeq      #0x6             jt 9	jf 16
-			(009) ldh      [20]
-			(010) jset     #0x1fff          jt 16	jf 11
-			(011) ldxb     4*([14]&0xf)
-			(012) ldh      [x + 14]
-			(013) jge      #0x19            jt 14	jf 16
-			(014) jgt      #0x19            jt 16	jf 15
-			(015) ret      #262144
-			(016) ret      #0
-			',
-	}, # tcp_src_portrange_degenerate
-	{
-		name => 'tcp_dst_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'tcp dst portrange 25-25',
-			'tcp dst portrange 25-smtp',
-			'tcp dst portrange smtp-25',
-			'tcp dst portrange smtp-smtp',
-			'tcp dst portrange 25',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 6
-			(002) ldb      [20]
-			(003) jeq      #0x6             jt 4	jf 16
-			(004) ldh      [56]
-			(005) jge      #0x19            jt 14	jf 16
-			(006) jeq      #0x800           jt 7	jf 16
-			(007) ldb      [23]
-			(008) jeq      #0x6             jt 9	jf 16
-			(009) ldh      [20]
-			(010) jset     #0x1fff          jt 16	jf 11
-			(011) ldxb     4*([14]&0xf)
-			(012) ldh      [x + 16]
-			(013) jge      #0x19            jt 14	jf 16
-			(014) jgt      #0x19            jt 16	jf 15
-			(015) ret      #262144
-			(016) ret      #0
-			',
-	}, # tcp_dst_portrange_degenerate
 	# In the tests below "domain" depends on getaddrinfo().
 	{
 		name => 'udp_port',
@@ -9455,6 +10448,18 @@ my @accept_blocks = (
 			'udp port domain',
 			'udp src or dst port 53',
 			'udp src or dst port domain',
+			# degenerate "portrange"
+			'udp portrange 53-53',
+			'udp portrange 53-domain',
+			'udp portrange domain-53',
+			'udp portrange domain-domain',
+			'udp portrange 53',
+			# "53" is a valid port range, but "domain" is not.
+			'udp src or dst portrange 53-53',
+			'udp src or dst portrange 53-domain',
+			'udp src or dst portrange domain-53',
+			'udp src or dst portrange domain-domain',
+			'udp src or dst portrange 53',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9485,6 +10490,12 @@ my @accept_blocks = (
 		aliases => [
 			'udp src port 53',
 			'udp src port domain',
+			# degenerate "src portrange"
+			'udp src portrange 53-53',
+			'udp src portrange 53-domain',
+			'udp src portrange domain-53',
+			'udp src portrange domain-domain',
+			'udp src portrange 53',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9511,6 +10522,12 @@ my @accept_blocks = (
 		aliases => [
 			'udp dst port 53',
 			'udp dst port domain',
+			# degenerate "dst portrange"
+			'udp dst portrange 53-53',
+			'udp dst portrange 53-domain',
+			'udp dst portrange domain-53',
+			'udp dst portrange domain-domain',
+			'udp dst portrange 53',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9644,108 +10661,6 @@ my @accept_blocks = (
 			(016) ret      #0
 			',
 	}, # udp_dst_portrange
-	{
-		name => 'udp_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'udp portrange 53-53',
-			'udp portrange 53-domain',
-			'udp portrange domain-53',
-			'udp portrange domain-domain',
-			'udp portrange 53',
-			# "53" is a valid port range, but "domain" is not.
-			'udp src or dst portrange 53-53',
-			'udp src or dst portrange 53-domain',
-			'udp src or dst portrange domain-53',
-			'udp src or dst portrange domain-domain',
-			'udp src or dst portrange 53',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 9
-			(002) ldb      [20]
-			(003) jeq      #0x11            jt 4	jf 22
-			(004) ldh      [54]
-			(005) jge      #0x35            jt 6	jf 7
-			(006) jgt      #0x35            jt 7	jf 21
-			(007) ldh      [56]
-			(008) jge      #0x35            jt 20	jf 22
-			(009) jeq      #0x800           jt 10	jf 22
-			(010) ldb      [23]
-			(011) jeq      #0x11            jt 12	jf 22
-			(012) ldh      [20]
-			(013) jset     #0x1fff          jt 22	jf 14
-			(014) ldxb     4*([14]&0xf)
-			(015) ldh      [x + 14]
-			(016) jge      #0x35            jt 17	jf 18
-			(017) jgt      #0x35            jt 18	jf 21
-			(018) ldh      [x + 16]
-			(019) jge      #0x35            jt 20	jf 22
-			(020) jgt      #0x35            jt 22	jf 21
-			(021) ret      #262144
-			(022) ret      #0
-			',
-	}, # udp_portrange_degenerate
-	{
-		name => 'udp_src_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'udp src portrange 53-53',
-			'udp src portrange 53-domain',
-			'udp src portrange domain-53',
-			'udp src portrange domain-domain',
-			'udp src portrange 53',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 6
-			(002) ldb      [20]
-			(003) jeq      #0x11            jt 4	jf 16
-			(004) ldh      [54]
-			(005) jge      #0x35            jt 14	jf 16
-			(006) jeq      #0x800           jt 7	jf 16
-			(007) ldb      [23]
-			(008) jeq      #0x11            jt 9	jf 16
-			(009) ldh      [20]
-			(010) jset     #0x1fff          jt 16	jf 11
-			(011) ldxb     4*([14]&0xf)
-			(012) ldh      [x + 14]
-			(013) jge      #0x35            jt 14	jf 16
-			(014) jgt      #0x35            jt 16	jf 15
-			(015) ret      #262144
-			(016) ret      #0
-			',
-	}, # udp_src_portrange_degenerate
-	{
-		name => 'udp_dst_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'udp dst portrange 53-53',
-			'udp dst portrange 53-domain',
-			'udp dst portrange domain-53',
-			'udp dst portrange domain-domain',
-			'udp dst portrange 53',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 6
-			(002) ldb      [20]
-			(003) jeq      #0x11            jt 4	jf 16
-			(004) ldh      [56]
-			(005) jge      #0x35            jt 14	jf 16
-			(006) jeq      #0x800           jt 7	jf 16
-			(007) ldb      [23]
-			(008) jeq      #0x11            jt 9	jf 16
-			(009) ldh      [20]
-			(010) jset     #0x1fff          jt 16	jf 11
-			(011) ldxb     4*([14]&0xf)
-			(012) ldh      [x + 16]
-			(013) jge      #0x35            jt 14	jf 16
-			(014) jgt      #0x35            jt 16	jf 15
-			(015) ret      #262144
-			(016) ret      #0
-			',
-	}, # udp_dst_portrange_degenerate
 	# SCTP tests below do not use service names because the translation is
 	# currently broken and may not have a suitable /etc/services contents
 	# in all supported environments after the bug fix.
@@ -9755,6 +10670,11 @@ my @accept_blocks = (
 		aliases => [
 			'sctp port 5672',
 			'sctp src or dst port 5672',
+			# degenerate "portrange"
+			'sctp portrange 5672-5672',
+			'sctp portrange 5672',
+			'sctp src or dst portrange 5672-5672',
+			'sctp src or dst portrange 5672',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -9782,7 +10702,12 @@ my @accept_blocks = (
 	{
 		name => 'sctp_src_port',
 		DLT => 'EN10MB',
-		aliases => ['sctp src port 5672'],
+		aliases => [
+			'sctp src port 5672',
+			# degenerate "src portrange"
+			'sctp src portrange 5672-5672',
+			'sctp src portrange 5672',
+		],
 		opt => '
 			(000) ldh      [12]
 			(001) jeq      #0x86dd          jt 2	jf 6
@@ -9805,7 +10730,12 @@ my @accept_blocks = (
 	{
 		name => 'sctp_dst_port',
 		DLT => 'EN10MB',
-		aliases => ['sctp dst port 5672'],
+		aliases => [
+			'sctp dst port 5672',
+			# degenerate "dst portrange"
+			'sctp dst portrange 5672-5672',
+			'sctp dst portrange 5672',
+		],
 		opt => '
 			(000) ldh      [12]
 			(001) jeq      #0x86dd          jt 2	jf 6
@@ -9915,101 +10845,15 @@ my @accept_blocks = (
 			',
 	}, # sctp_dst_portrange
 	{
-		name => 'sctp_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'sctp portrange 5672-5672',
-			'sctp portrange 5672',
-			'sctp src or dst portrange 5672-5672',
-			'sctp src or dst portrange 5672',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 9
-			(002) ldb      [20]
-			(003) jeq      #0x84            jt 4	jf 22
-			(004) ldh      [54]
-			(005) jge      #0x1628          jt 6	jf 7
-			(006) jgt      #0x1628          jt 7	jf 21
-			(007) ldh      [56]
-			(008) jge      #0x1628          jt 20	jf 22
-			(009) jeq      #0x800           jt 10	jf 22
-			(010) ldb      [23]
-			(011) jeq      #0x84            jt 12	jf 22
-			(012) ldh      [20]
-			(013) jset     #0x1fff          jt 22	jf 14
-			(014) ldxb     4*([14]&0xf)
-			(015) ldh      [x + 14]
-			(016) jge      #0x1628          jt 17	jf 18
-			(017) jgt      #0x1628          jt 18	jf 21
-			(018) ldh      [x + 16]
-			(019) jge      #0x1628          jt 20	jf 22
-			(020) jgt      #0x1628          jt 22	jf 21
-			(021) ret      #262144
-			(022) ret      #0
-			',
-	}, # sctp_portrange_degenerate
-	{
-		name => 'sctp_src_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'sctp src portrange 5672-5672',
-			'sctp src portrange 5672',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 6
-			(002) ldb      [20]
-			(003) jeq      #0x84            jt 4	jf 16
-			(004) ldh      [54]
-			(005) jge      #0x1628          jt 14	jf 16
-			(006) jeq      #0x800           jt 7	jf 16
-			(007) ldb      [23]
-			(008) jeq      #0x84            jt 9	jf 16
-			(009) ldh      [20]
-			(010) jset     #0x1fff          jt 16	jf 11
-			(011) ldxb     4*([14]&0xf)
-			(012) ldh      [x + 14]
-			(013) jge      #0x1628          jt 14	jf 16
-			(014) jgt      #0x1628          jt 16	jf 15
-			(015) ret      #262144
-			(016) ret      #0
-			',
-	}, # sctp_src_portrange_degenerate
-	{
-		name => 'sctp_dst_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'sctp dst portrange 5672-5672',
-			'sctp dst portrange 5672',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 6
-			(002) ldb      [20]
-			(003) jeq      #0x84            jt 4	jf 16
-			(004) ldh      [56]
-			(005) jge      #0x1628          jt 14	jf 16
-			(006) jeq      #0x800           jt 7	jf 16
-			(007) ldb      [23]
-			(008) jeq      #0x84            jt 9	jf 16
-			(009) ldh      [20]
-			(010) jset     #0x1fff          jt 16	jf 11
-			(011) ldxb     4*([14]&0xf)
-			(012) ldh      [x + 16]
-			(013) jge      #0x1628          jt 14	jf 16
-			(014) jgt      #0x1628          jt 16	jf 15
-			(015) ret      #262144
-			(016) ret      #0
-			',
-	}, # sctp_dst_portrange_degenerate
-	{
 		name => 'port',
 		DLT => 'EN10MB',
 		aliases => [
 			'port 7',
 			'src or dst port 7',
 			# Do not try a service name due to SCTP.
+			# degenerate "portrange"
+			'portrange 7-7',
+			'portrange 7',
 		],
 		opt => '
 			(000) ldh      [12]
@@ -10041,7 +10885,12 @@ my @accept_blocks = (
 	{
 		name => 'src_port',
 		DLT => 'EN10MB',
-		aliases => ['src port 7'],
+		aliases => [
+			'src port 7',
+			# degenerate "src portrange"
+			'src portrange 7-7',
+			'src portrange 7',
+		],
 		opt => '
 			(000) ldh      [12]
 			(001) jeq      #0x86dd          jt 2	jf 8
@@ -10068,7 +10917,12 @@ my @accept_blocks = (
 	{
 		name => 'dst_port',
 		DLT => 'EN10MB',
-		aliases => ['dst port 7'],
+		aliases => [
+			'dst port 7',
+			# degenerate "dst portrange"
+			'dst portrange 7-7',
+			'dst portrange 7',
+		],
 		opt => '
 			(000) ldh      [12]
 			(001) jeq      #0x86dd          jt 2	jf 8
@@ -10192,104 +11046,65 @@ my @accept_blocks = (
 			',
 	}, # dst_portrange
 	{
-		name => 'portrange_degenerate',
-		DLT => 'EN10MB',
+		name => 'byte_eq',
+		DLT => 'IPV4',
 		aliases => [
-			'portrange 1812-1812',
-			'portrange 1812',
+			'byte 8 = 5',
+			'byte 8 == 5',
 		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 11
-			(002) ldb      [20]
-			(003) jeq      #0x84            jt 6	jf 4
-			(004) jeq      #0x6             jt 6	jf 5
-			(005) jeq      #0x11            jt 6	jf 26
-			(006) ldh      [54]
-			(007) jge      #0x714           jt 8	jf 9
-			(008) jgt      #0x714           jt 9	jf 25
-			(009) ldh      [56]
-			(010) jge      #0x714           jt 24	jf 26
-			(011) jeq      #0x800           jt 12	jf 26
-			(012) ldb      [23]
-			(013) jeq      #0x84            jt 16	jf 14
-			(014) jeq      #0x6             jt 16	jf 15
-			(015) jeq      #0x11            jt 16	jf 26
-			(016) ldh      [20]
-			(017) jset     #0x1fff          jt 26	jf 18
-			(018) ldxb     4*([14]&0xf)
-			(019) ldh      [x + 14]
-			(020) jge      #0x714           jt 21	jf 22
-			(021) jgt      #0x714           jt 22	jf 25
-			(022) ldh      [x + 16]
-			(023) jge      #0x714           jt 24	jf 26
-			(024) jgt      #0x714           jt 26	jf 25
-			(025) ret      #262144
-			(026) ret      #0
+		unopt => '
+			(000) ldb      [8]
+			(001) jeq      #0x5             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
 			',
-	}, # portrange_degenerate
+	}, # byte_eq
 	{
-		name => 'src_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'src portrange 1812-1812',
-			'src portrange 1812',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 8
-			(002) ldb      [20]
-			(003) jeq      #0x84            jt 6	jf 4
-			(004) jeq      #0x6             jt 6	jf 5
-			(005) jeq      #0x11            jt 6	jf 20
-			(006) ldh      [54]
-			(007) jge      #0x714           jt 18	jf 20
-			(008) jeq      #0x800           jt 9	jf 20
-			(009) ldb      [23]
-			(010) jeq      #0x84            jt 13	jf 11
-			(011) jeq      #0x6             jt 13	jf 12
-			(012) jeq      #0x11            jt 13	jf 20
-			(013) ldh      [20]
-			(014) jset     #0x1fff          jt 20	jf 15
-			(015) ldxb     4*([14]&0xf)
-			(016) ldh      [x + 14]
-			(017) jge      #0x714           jt 18	jf 20
-			(018) jgt      #0x714           jt 20	jf 19
-			(019) ret      #262144
-			(020) ret      #0
+		name => 'byte_lt',
+		DLT => 'IPV4',
+		aliases => ['byte 8 < 5'],
+		unopt => '
+			(000) ldb      [8]
+			(001) jge      #0x5             jt 2	jf 3
+			(002) ret      #0
+			(003) ret      #262144
 			',
-	}, # src_portrange_degenerate
+	}, # byte_lt
 	{
-		name => 'dst_portrange_degenerate',
-		DLT => 'EN10MB',
-		aliases => [
-			'dst portrange 1812-1812',
-			'dst portrange 1812',
-		],
-		opt => '
-			(000) ldh      [12]
-			(001) jeq      #0x86dd          jt 2	jf 8
-			(002) ldb      [20]
-			(003) jeq      #0x84            jt 6	jf 4
-			(004) jeq      #0x6             jt 6	jf 5
-			(005) jeq      #0x11            jt 6	jf 20
-			(006) ldh      [56]
-			(007) jge      #0x714           jt 18	jf 20
-			(008) jeq      #0x800           jt 9	jf 20
-			(009) ldb      [23]
-			(010) jeq      #0x84            jt 13	jf 11
-			(011) jeq      #0x6             jt 13	jf 12
-			(012) jeq      #0x11            jt 13	jf 20
-			(013) ldh      [20]
-			(014) jset     #0x1fff          jt 20	jf 15
-			(015) ldxb     4*([14]&0xf)
-			(016) ldh      [x + 16]
-			(017) jge      #0x714           jt 18	jf 20
-			(018) jgt      #0x714           jt 20	jf 19
-			(019) ret      #262144
-			(020) ret      #0
+		name => 'byte_gt',
+		DLT => 'IPV4',
+		aliases => ['byte 8 > 5'],
+		unopt => '
+			(000) ldb      [8]
+			(001) jgt      #0x5             jt 2	jf 3
+			(002) ret      #262144
+			(003) ret      #0
 			',
-	}, # dst_portrange_degenerate
+	}, # byte_gt
+	{
+		name => 'byte_or',
+		DLT => 'IPV4',
+		aliases => ['byte 8 | 5'],
+		unopt => '
+			(000) ldb      [8]
+			(001) or       #0x5
+			(002) jeq      #0x0             jt 3	jf 4
+			(003) ret      #0
+			(004) ret      #262144
+			',
+	}, # byte_or
+	{
+		name => 'byte_and',
+		DLT => 'IPV4',
+		aliases => ['byte 8 & 5'],
+		unopt => '
+			(000) ldb      [8]
+			(001) and      #0x5
+			(002) jeq      #0x0             jt 3	jf 4
+			(003) ret      #0
+			(004) ret      #262144
+			',
+	}, # byte_and
 );
 
 # In apply_blocks each test block always generates two tests: optimized and
@@ -10894,6 +11709,78 @@ my @apply_blocks = (
 		expr => 'wlan dir nods',
 		results => [0, 65535, 0, 65535, 0],
 	},
+	{
+		name => 'iso_proto_isis_EN10MB',
+		savefile => 'ISIS_external_lsp.pcap',
+		expr => 'iso proto \isis',
+		results => [8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192],
+	},
+	{
+		name => 'iso_proto_esis_EN10MB',
+		savefile => 'ISIS_external_lsp.pcap',
+		expr => 'iso proto \esis',
+		results => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	},
+	{
+		name => 'csnp_EN10MB',
+		savefile => 'ISIS_external_lsp.pcap',
+		expr => 'csnp',
+		results => [8192, 0, 0, 0, 0, 8192, 0, 0, 0, 0],
+	},
+	{
+		name => 'iso_proto_isis_C_HDLC',
+		savefile => 'ISIS_p2p_adjacency.pcap',
+		expr => 'iso proto \isis',
+		results => [8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192],
+	},
+	{
+		name => 'iso_proto_esis_C_HDLC',
+		savefile => 'ISIS_p2p_adjacency.pcap',
+		expr => 'iso proto \esis',
+		results => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	},
+	{
+		name => 'csnp_C_HDLC',
+		savefile => 'ISIS_p2p_adjacency.pcap',
+		expr => 'csnp',
+		results => [0, 0, 0, 0, 0, 8192, 8192, 8192, 8192, 0, 0, 0, 0, 0],
+	},
+	{
+		name => 'vxlan',
+		savefile => 'vxlan.pcap',
+		expr => 'vxlan',
+		results => [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500],
+	},
+	{
+		name => 'vxlan_100',
+		savefile => 'vxlan.pcap',
+		expr => 'vxlan 100',
+		results => [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500],
+	},
+	{
+		name => 'vxlan_101',
+		savefile => 'vxlan.pcap',
+		expr => 'vxlan 101',
+		results => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	},
+	{
+		name => 'geneve',
+		savefile => 'geneve.pcap',
+		expr => 'geneve',
+		results => [262144, 262144, 262144, 262144, 262144, 262144, 262144, 262144, 262144, 262144],
+	},
+	{
+		name => 'geneve_10',
+		savefile => 'geneve.pcap',
+		expr => 'geneve 10',
+		results => [262144, 0, 0, 262144, 0, 262144, 0, 0, 262144, 0],
+	},
+	{
+		name => 'geneve_11',
+		savefile => 'geneve.pcap',
+		expr => 'geneve 11',
+		results => [0, 262144, 262144, 0, 262144, 0, 262144, 262144, 0, 262144],
+	},
 );
 
 # * name, DLT, expr, netmask and skip: same as in accept_blocks above
@@ -10911,79 +11798,79 @@ my @reject_tests = (
 		name => 'pppoes_value',
 		DLT => 'EN10MB',
 		expr => 'pppoes 65536',
-		errstr => 'greater than maximum',
+		errstr => 'PPPoE session number 65536 greater than maximum 65535',
 	},
 	{
 		name => 'mtp2_on_mtp3',
 		DLT => 'MTP3',
 		expr => 'fisu',
-		errstr => 'supported only on MTP2',
+		errstr => '\'fisu\' supported only on SS7',
 	},
 	{
 		name => 'mtp2_sio',
 		DLT => 'MTP2',
 		expr => 'sio 256',
-		errstr => 'too big',
+		errstr => 'sio 256 greater than maximum 255',
 	},
 	{
 		name => 'mtp3_dpc',
 		DLT => 'MTP2',
 		expr => 'dpc 16384',
-		errstr => 'too big',
+		errstr => 'dpc 16384 greater than maximum 16383',
 	},
 	{
 		name => 'mtp3_opc',
 		DLT => 'MTP2',
 		expr => 'opc 16384',
-		errstr => 'too big',
+		errstr => 'opc 16384 greater than maximum 16383',
 	},
 	{
 		name => 'mtp3_sls',
 		DLT => 'MTP2',
 		expr => 'sls 16',
-		errstr => 'too big',
+		errstr => 'sls 16 greater than maximum 15',
 	},
 	{
 		name => 'mtp2_hsio',
 		DLT => 'MTP2',
 		expr => 'hsio 256',
-		errstr => 'too big',
+		errstr => 'hsio 256 greater than maximum 255',
 	},
 	{
 		name => 'mtp3_hdpc',
 		DLT => 'MTP2',
 		expr => 'hdpc 16384',
-		errstr => 'too big',
+		errstr => 'hdpc 16384 greater than maximum 16383',
 	},
 	{
 		name => 'mtp3_hopc',
 		DLT => 'MTP2',
 		expr => 'hopc 16384',
-		errstr => 'too big',
+		errstr => 'hopc 16384 greater than maximum 16383',
 	},
 	{
 		name => 'mtp3_hsls',
 		DLT => 'MTP2',
 		expr => 'hsls 16',
-		errstr => 'too big',
+		errstr => 'hsls 16 greater than maximum 15',
 	},
 	{
 		name => 'atm_vpi',
 		DLT => 'SUNATM',
 		expr => 'vpi 256',
-		errstr => 'VPI value',
+		errstr => 'VPI 256 greater than maximum 255',
 	},
 	{
 		name => 'atm_vci',
 		DLT => 'SUNATM',
 		expr => 'vci 65536',
-		errstr => 'VCI value',
+		errstr => 'VCI 65536 greater than maximum 65535',
 	},
 	{
 		name => 'wlan_on_eth',
 		DLT => 'EN10MB',
 		expr => 'type data',
-		errstr => '802.11 link-layer types supported only on 802.11',
+		errstr => '\'type/subtype\' not supported on Ethernet',
 	},
 	{
 		name => 'wlan_type',
@@ -11056,16 +11943,30 @@ my @reject_tests = (
 		errstr => 'syntax error',
 	},
 	{
+		name => 'ip6_host_ipv4addr',
+		skip => skip_config_undef ('INET6'),
+		DLT => 'RAW',
+		expr => 'ip6 host 1.2.3.4',
+		errstr => '\'ip6\' is not a valid qualifier for \'ip host\'',
+	},
+	{
+		name => 'ip6_host_ipv4name',
+		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		DLT => 'RAW',
+		expr => 'ip6 host noeth-ipv4-noipv6.host123.libpcap.test',
+		errstr => "unknown host \'noeth-ipv4-noipv6.host123.libpcap.test' for specified address family",
+	},
+	{
 		name => 'broadcast_not_supported',
 		DLT => 'SLIP',
 		expr => 'broadcast',
-		errstr => 'not a broadcast link',
+		errstr => '\'broadcast\' not supported on SLIP',
 	},
 	{
 		name => 'multicast_not_supported',
 		DLT => 'SLIP',
 		expr => 'multicast',
-		errstr => 'link-layer multicast filters supported only on',
+		errstr => '\'multicast\' not supported on SLIP',
 	},
 # This test has been flaky because it depends on an external effect (DNS
 # lookup), which sometimes times out.  Let's disable it until there is a good
@@ -11357,13 +12258,13 @@ my @reject_tests = (
 		skip => skip_config_def1 ('NO_PROTOCHAIN'),
 		DLT => 'EN10MB',
 		expr => 'arp protochain 17',
-		errstr => 'bad protocol applied for \'protochain\'',
+		errstr => '\'arp\' is not a valid qualifier for \'protochain\'',
 	},
 	{
 		name => 'arp_proto',
 		DLT => 'EN10MB',
 		expr => 'arp proto 17',
-		errstr => 'arp does not encapsulate another protocol',
+		errstr => '\'arp\' is not a valid qualifier for \'proto\'',
 	},
 	{
 		name => 'arp_host_ipv4_ipv6',
@@ -11371,7 +12272,7 @@ my @reject_tests = (
 			skip_no_hosts(),
 		DLT => 'FDDI',
 		expr => 'arp host eth-ipv4-ipv6.host123.libpcap.test',
-		errstr => '\'arp\' modifier applied to ip6 host',
+		errstr => '\'arp\' is not a valid qualifier for \'ip6 host\'',
 	},
 	{
 		name => 'rarp_host_ipv4_ipv6',
@@ -11379,7 +12280,7 @@ my @reject_tests = (
 			skip_no_hosts(),
 		DLT => 'FDDI',
 		expr => 'rarp host eth-ipv4-ipv6.host123.libpcap.test',
-		errstr => '\'rarp\' modifier applied to ip6 host',
+		errstr => '\'rarp\' is not a valid qualifier for \'ip6 host\'',
 	},
 	{
 		name => 'arp_host_noipv4_noipv6',
@@ -11445,7 +12346,7 @@ my @reject_tests = (
 		name => 'proto_1_2_3_4',
 		DLT => 'RAW',
 		expr => 'proto 1.2.3.4',
-		errstr => '\'proto\' modifier applied to IP address',
+		errstr => '\'proto\' qualifier applied to IPv4 address',
 	},
 	# In the tests below the hostname normally should not matter because the
 	# lookup would be made not in the IPv4/IPv6 space, or not at all.  Still
@@ -11601,7 +12502,7 @@ my @reject_tests = (
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		expr => "ip6 gateway eth-ipv4-ipv6.host123.libpcap.test",
-		errstr => 'illegal modifier of \'gateway\'',
+		errstr => '\'ip6\' is not a valid qualifier for \'gateway\'',
 	},
 	{
 		name => 'gateway_1',
@@ -11669,7 +12570,392 @@ my @reject_tests = (
 		expr => 'link[0:5] != 0',
 		errstr => 'data size must be 1, 2, or 4',
 	},
+	{
+		name => 'bare_radio',
+		DLT => 'IEEE802_11_RADIO',
+		expr => 'radio',
+		errstr => '\'radio\' cannot be used as an abbreviation',
+	},
+	{
+		name => 'bare_link',
+		DLT => 'IEEE802_11_RADIO',
+		expr => 'link',
+		errstr => '\'link\' cannot be used as an abbreviation',
+	},
+	{
+		name => 'link_host_ipv4addr',
+		DLT => 'RAW',
+		expr => 'link host 1.2.3.4',
+		errstr => 'illegal link layer address',
+	},
+	{
+		name => 'link_net_ipv4addr',
+		DLT => 'RAW',
+		expr => 'link net 1.2.3.4',
+		errstr => 'illegal link layer address',
+	},
+	{
+		skip => skip_config_undef ('INET6'),
+		name => 'link_host_ipv6addr',
+		DLT => 'RAW',
+		expr => 'link host fe80::',
+		errstr => '\'link\' is not a valid qualifier for \'ip6 host\'',
+	},
+	{
+		skip => skip_config_undef ('INET6'),
+		name => 'link_net_ipv6addr',
+		DLT => 'RAW',
+		expr => 'link net fe80::',
+		errstr => '\'link\' is not a valid qualifier for \'ip6 net\'',
+	},
+	{
+		skip => skip_no_networks(),
+		name => 'link_net_ipv4name',
+		DLT => 'RAW',
+		expr => 'link net net-10-20-30-0.libpcap.test',
+		errstr => '\'link\' is not a valid qualifier for \'ip net\'',
+	},
+	{
+		name => 'reason_congestion',
+		DLT => 'RAW',
+		expr => 'reason congestion',
+		errstr => '\'reason\' supported only on PFLOG linktype',
+	},
+	{
+		name => 'reason_invalid_PFLOG',
+		DLT => 'PFLOG',
+		expr => 'reason invalid',
+		errstr => 'unknown PF reason "invalid"',
+	},
+	{
+		name => 'action_invalid_PFLOG',
+		DLT => 'PFLOG',
+		expr => 'action invalid',
+		errstr => 'unknown PF action "invalid"',
+	},
+	{
+		name => 'iso_proto_256',
+		DLT => 'EN10MB',
+		expr => 'iso proto 256',
+		errstr => 'ISO protocol 256 greater than maximum 255',
+	},
+	{
+		name => 'isis_proto_32',
+		DLT => 'EN10MB',
+		expr => 'isis proto 32',
+		errstr => 'IS-IS PDU type 32 greater than maximum 31',
+	},
+	{
+		name => 'byte_ne',
+		DLT => 'IPV4',
+		expr => 'byte 1 != 2',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'byte_le',
+		DLT => 'IPV4',
+		expr => 'byte 1 <= 2',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'byte_ge',
+		DLT => 'IPV4',
+		expr => 'byte 1 >= 2',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'byte_xor',
+		DLT => 'IPV4',
+		expr => 'byte 1 ^ 2',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'byte_lsh',
+		DLT => 'IPV4',
+		expr => 'byte 1 << 2',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'byte_rsh',
+		DLT => 'IPV4',
+		expr => 'byte 1 >> 2',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'byte_eq_256',
+		DLT => 'IPV4',
+		expr => 'byte 1 = 256',
+		errstr => 'byte argument 256 greater than maximum 255',
+	},
+	{
+		name => 'byte_lt_256',
+		DLT => 'IPV4',
+		expr => 'byte 1 < 256',
+		errstr => 'byte argument 256 greater than maximum 255',
+	},
+	{
+		name => 'byte_gt_256',
+		DLT => 'IPV4',
+		expr => 'byte 1 > 256',
+		errstr => 'byte argument 256 greater than maximum 255',
+	},
+	{
+		name => 'byte_and_256',
+		DLT => 'IPV4',
+		expr => 'byte 1 & 256',
+		errstr => 'byte argument 256 greater than maximum 255',
+	},
+	{
+		name => 'byte_or_256',
+		DLT => 'IPV4',
+		expr => 'byte 1 | 256',
+		errstr => 'byte argument 256 greater than maximum 255',
+	},
+	{
+		name => 'vxlan_invalid',
+		DLT => 'EN10MB',
+		expr => 'vxlan invalid',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'vxlan_123456789',
+		DLT => 'EN10MB',
+		expr => 'vxlan 123456789',
+		errstr => 'VXLAN VNI 123456789 greater than maximum 16777215',
+	},
+	{
+		name => 'geneve_invalid',
+		DLT => 'EN10MB',
+		expr => 'geneve invalid',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'geneve_123456789',
+		DLT => 'EN10MB',
+		expr => 'geneve 123456789',
+		errstr => 'Geneve VNI 123456789 greater than maximum 16777215',
+	},
 );
+
+push @reject_tests, {
+	name => "noindex_${_}",
+	DLT => 'EN10MB',
+	expr => "${_}[0] == 0",
+	errstr => "'${_}' does not support the index operation",
+} foreach (qw{
+	ah
+	esp
+	aarp
+	iso
+	esis
+	isis
+	clnp
+	stp
+	ipx
+	netbeui
+	l1
+	l2
+	iih
+	snp
+	csnp
+	psnp
+	lsp
+});
+
+# "link host IPV4ADDR" and "link net IPV4ADDR" use a different code path with
+# a different error message and are tested above.  "link net NAME" uses yet
+# another different code path with yet another different error message and is
+# tested above.  "(link|ip|rarp|arp|decnet|ip6) host" can be valid syntax or
+# not (depending on the primitive ID), which is tested above.
+foreach (qw(
+	sctp
+	tcp
+	udp
+	icmp
+	igmp
+	igrp
+	atalk
+	lat
+	sca
+	moprc
+	mopdl
+	icmp6
+	ah
+	esp
+	pim
+	vrrp
+	aarp
+	iso
+	esis
+	isis
+	clnp
+	stp
+	ipx
+	netbeui
+	l1
+	l2
+	iih
+	snp
+	csnp
+	psnp
+	lsp
+	radio
+	carp
+)) {
+	# HID -> gen_ncode() -> gen_host()
+	push @reject_tests, {
+		name => "inv_qual_${_}_host_ipv4addr",
+		DLT => 'EN10MB',
+		expr => "${_} host 1.2.3.4",
+		errstr => "'${_}' is not a valid qualifier for 'ip host'",
+	};
+	# HID -> gen_ncode() -> gen_host()
+	push @reject_tests, {
+		name => "inv_qual_${_}_net_ipv4addr",
+		DLT => 'EN10MB',
+		expr => "${_} net 1.2.3.4",
+		errstr => "'${_}' is not a valid qualifier for 'ip net'",
+	};
+	# HID6 -> gen_mcode6() -> gen_host6()
+	push @reject_tests, {
+		skip => skip_config_undef ('INET6'),
+		name => "inv_qual_${_}_host_ipv6addr",
+		DLT => 'EN10MB',
+		expr => "${_} host fe80::",
+		errstr => "'${_}' is not a valid qualifier for 'ip6 host'",
+	};
+	# HID6 -> gen_mcode6() -> gen_host6()
+	push @reject_tests, {
+		skip => skip_config_undef ('INET6'),
+		name => "inv_qual_${_}_net_ipv6addr",
+		DLT => 'EN10MB',
+		expr => "${_} net fe80::",
+		errstr => "'${_}' is not a valid qualifier for 'ip6 net'",
+	};
+
+	# HID NETMASK HID -> gen_mcode()
+	push @reject_tests, {
+		name => "inv_qual_${_}_host_ipv4mask",
+		DLT => 'EN10MB',
+		expr => "${_} host 1.2.3.0 mask 255.255.255.0",
+		errstr => 'Mask syntax for networks only',
+	};
+	# HID NETMASK HID -> gen_mcode() -> gen_host()
+	push @reject_tests, {
+		name => "inv_qual_${_}_net_ipv4mask",
+		DLT => 'EN10MB',
+		expr => "${_} net 1.2.3.0 mask 255.255.255.0",
+		errstr => "'${_}' is not a valid qualifier for 'ip net'",
+	};
+	# ("mask" is IPv4-only)
+
+	# HID '/' NUM -> gen_mcode()
+	push @reject_tests, {
+		name => "inv_qual_${_}_host_ipv4cidr",
+		DLT => 'EN10MB',
+		expr => "${_} host 1.2.3.0/24",
+		errstr => 'Mask syntax for networks only',
+	};
+	# HID '/' NUM -> gen_mcode() -> gen_host()
+	push @reject_tests, {
+		name => "inv_qual_${_}_net_ipv4cidr",
+		DLT => 'EN10MB',
+		expr => "${_} net 1.2.3.0/24",
+		errstr => "'${_}' is not a valid qualifier for 'ip net'",
+	};
+	# HID6 '/' NUM -> gen_mcode6()
+	push @reject_tests, {
+		skip => skip_config_undef ('INET6'),
+		name => "inv_qual_${_}_host_ipv6cidr",
+		DLT => 'EN10MB',
+		expr => "${_} host fe80::/16",
+		errstr => 'Mask syntax for networks only',
+	};
+	# HID6 '/' NUM -> gen_mcode6() -> gen_host6()
+	push @reject_tests, {
+		skip => skip_config_undef ('INET6'),
+		name => "inv_qual_${_}_net_ipv6cidr",
+		DLT => 'EN10MB',
+		expr => "${_} net fe80::/16",
+		errstr => "'${_}' is not a valid qualifier for 'ip6 net'",
+	};
+
+	# ID -> gen_scode() -> gen_host()
+	push @reject_tests, {
+		skip => skip_no_hosts(),
+		name => "inv_qual_${_}_host_ipv4name",
+		DLT => 'EN10MB',
+		expr => "${_} host noeth-ipv4-noipv6.host123.libpcap.test",
+		errstr => "'${_}' is not a valid qualifier for 'ip host'",
+	};
+	# ID -> gen_scode() -> gen_host()
+	push @reject_tests, {
+		skip => skip_no_networks(),
+		name => "inv_qual_${_}_net_ipv4name",
+		DLT => 'EN10MB',
+		expr => "${_} net net-10-20-30-0.libpcap.test",
+		errstr => "'${_}' is not a valid qualifier for 'ip net'",
+	};
+	# ID -> gen_scode() -> gen_host6()
+	push @reject_tests, {
+		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		name => "inv_qual_${_}_host_ipv6name",
+		DLT => 'EN10MB',
+		expr => "${_} host noeth-noipv4-ipv6.host123.libpcap.test",
+		errstr => "'${_}' is not a valid qualifier for 'ip6 host'",
+	};
+	# (IPv6 networks cannot have names)
+}
+
+foreach (qw(
+	link
+	sctp
+	tcp
+	udp
+	icmp
+	igmp
+	igrp
+	atalk
+	decnet
+	lat
+	sca
+	moprc
+	mopdl
+	ip6
+	icmp6
+	ah
+	esp
+	pim
+	vrrp
+	aarp
+	iso
+	esis
+	isis
+	clnp
+	stp
+	ipx
+	netbeui
+	l1
+	l2
+	iih
+	snp
+	csnp
+	psnp
+	lsp
+	radio
+	carp
+)) {
+	# ID -> gen_scode() -> gen_host6()
+	push @reject_tests, {
+		skip => skip_config_def1 ('INET6') ||
+			skip_no_ethers() ||
+			skip_no_hosts(),
+		name => "inv_qual_${_}_gateway_ipv4name",
+		DLT => 'EN10MB',
+		expr => "${_} gateway eth-ipv4-noipv6.host123.libpcap.test",
+		errstr => "'${_}' is not a valid qualifier for 'gateway'",
+	};
+}
 
 sub accept_test_label {
 	return join '_', ('accept', @_);
@@ -11811,7 +13097,7 @@ sub run_reject_test {
 # collect the results preserving the ordering.
 my @ready_to_run;
 foreach my $test (@accept_blocks) {
-	if (! defined $test->{name}) {
+	if (! defined $test->{name} || $test->{name} eq '') {
 		die "Internal error: accept test block <UNKNOWN> does not define key 'name'";
 	}
 	foreach ('DLT', 'aliases') {
@@ -11875,12 +13161,19 @@ foreach my $test (@accept_blocks) {
 	}
 }
 foreach my $block (@apply_blocks) {
-	if (! defined $block->{name}) {
+	if (! defined $block->{name} || $block->{name} eq '') {
 		die "Internal error: apply test block <UNKNOWN> does not define key 'name'";
 	}
 	foreach ('savefile', 'expr', 'results') {
 		next if defined $block->{$_};
 		die "Internal error: apply test block '$block->{name}' does not define key '$_'";
+	}
+	foreach ('savefile', 'expr') {
+		next if $block->{$_} ne '';
+		die "Internal error: key '$_' is an empty string in apply test block '$block->{name}'";
+	}
+	if (! scalar @{$block->{results}}) {
+		die "Internal error: apply test block '$block->{name}' defines zero results";
 	}
 	my $skip_reason = (defined $block->{skip} && $block->{skip} ne '') ?
 		$block->{skip} : undef;
@@ -11912,11 +13205,11 @@ foreach my $block (@apply_blocks) {
 	}
 }
 foreach my $test (@reject_tests) {
-	if (! defined $test->{name}) {
+	if (! defined $test->{name} || $test->{name} eq '') {
 		die "Internal error: reject test <UNKNOWN> does not define key 'name'";
 	}
 	foreach ('DLT', 'expr', 'errstr') {
-		next if defined $test->{$_};
+		next if defined $test->{$_} && $test->{$_} ne '';
 		die "Internal error: reject test '$test->{name}' does not define key '$_'";
 	}
 	my $label = reject_test_label $test->{name};

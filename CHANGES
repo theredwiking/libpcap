@@ -18,6 +18,7 @@ DayOfTheWeek, Month DD, YYYY / The Tcpdump Group
         The Riverbed AirPcap Product has reached End of Availability
         (EOA) as of December 31, 2017
       Mind netmap support in pcap_lib_version().
+      Make pcap_compile() error messages more uniform and consistent.
     Link-layer types:
       Add LINKTYPE_ETW/DLT_ETW.
       Add LINKTYPE_NETANALYZER_NG/DLT_NETANALYZER_NG (pull request
@@ -52,6 +53,11 @@ DayOfTheWeek, Month DD, YYYY / The Tcpdump Group
       Have "outbound" mean Tx only for DLT_SLIP.
       Filter Linux SocketCAN frames in userland if necessary.
       Enable "[wlan] dir/type/subtype" for DLT_PPI.
+      Require "(iso|isis) proto" values to be within valid ranges.
+      Use the correct IS-IS PDU type offset for DLT_C_HDLC.
+      Use the correct bit mask for IS-IS PDU type value.
+      Fix the "|" and "&" operators of the "byte" primitive.
+      Require "byte" argument value to be within range.
     rpcap:
       Support user names and passwords in rpcap:// and rpcaps:// URLs.
       Add a -t flag to rpcapd to specify the data channel port; from
