@@ -105,7 +105,7 @@ Options:
   --skipped       print the skipped tests details
 ";
 	return $ret unless $detailed;
-	$ret .="
+	$ret .= "
 Set FILTERTEST_TIMEOUT to 0 to disable the timeout completely or to any other
 value to override the default timeout.  The timeout applies to every test.
 If TIMEOUT_BIN is not set, the timeout applies iff the default \"timeout\"
@@ -121,6 +121,9 @@ Autoconf and CMake, both in-tree and out-of-tree builds.
 TIMEOUT_BIN allows to specify the path to a timeout(1) binary.
 
 TESTRUN_JOBS allows to specify the number of tester threads (1 by default).
+
+TESTRUN_SHORT=1 generates a shorter list of tests (not recommended unless the
+host is very slow and time is a factor).
 ";
 	return $ret;
 }
@@ -130,6 +133,7 @@ my $only_one = undef;
 my $only_list = 0;
 my $print_passed = 0;
 my $print_skipped = 0;
+my $only_short = defined $ENV{TESTRUN_SHORT} ? $ENV{TESTRUN_SHORT} : 0;
 if (! GetOptions (
 	'one=s' => \$only_one,
 	'list' => \$only_list,
@@ -5779,6 +5783,22 @@ my @accept_blocks = (
 			(006) ret      #0
 			',
 	}, # mpls_ppp_unary
+	{
+		name => 'pppoes_mpls_unary',
+		DLT => 'EN10MB',
+		aliases => ['pppoes and mpls 123'],
+		opt => '
+			(000) ldh      [12]
+			(001) jeq      #0x8864          jt 2	jf 8
+			(002) ldh      [20]
+			(003) jeq      #0x281           jt 4	jf 8
+			(004) ld       [22]
+			(005) and      #0xfffff000
+			(006) jeq      #0x7b000         jt 7	jf 8
+			(007) ret      #262144
+			(008) ret      #0
+			',
+	}, # pppoes_mpls_unary
 
 	{
 		name => 'vxlan_nullary',
@@ -8574,29 +8594,28 @@ my @accept_blocks = (
 		unopt => '
 			(000) ldb      [0]
 			(001) and      #0xf0
-			(002) jeq      #0x40            jt 3	jf 24
+			(002) jeq      #0x40            jt 3	jf 23
 			(003) ldb      [9]
 			(004) ldxb     4*([0]&0xf)
-			(005) jeq      #0x11            jt 21	jf 6
-			(006) jeq      #0x3b            jt 21	jf 7
+			(005) jeq      #0x11            jt 20	jf 6
+			(006) jeq      #0x3b            jt 20	jf 7
 			(007) add      #0
-			(008) jeq      #0x33            jt 9	jf 21
-			(009) txa
-			(010) ldb      [x + 0]
-			(011) st       M[0]
-			(012) txa
-			(013) add      #1
-			(014) tax
-			(015) ldb      [x + 0]
-			(016) add      #2
-			(017) mul      #4
-			(018) tax
-			(019) ld       M[0]
-			(020) ja       5
-			(021) add      #0
-			(022) jeq      #0x11            jt 23	jf 24
-			(023) ret      #262144
-			(024) ret      #0
+			(008) jeq      #0x33            jt 9	jf 20
+			(009) ldb      [x + 0]
+			(010) st       M[0]
+			(011) txa
+			(012) add      #1
+			(013) tax
+			(014) ldb      [x + 0]
+			(015) add      #2
+			(016) mul      #4
+			(017) tax
+			(018) ld       M[0]
+			(019) ja       5
+			(020) add      #0
+			(021) jeq      #0x11            jt 22	jf 23
+			(022) ret      #262144
+			(023) ret      #0
 			',
 	}, # ip_protochain
 	{
@@ -8610,11 +8629,11 @@ my @accept_blocks = (
 		unopt => '
 			(000) ldb      [0]
 			(001) and      #0xf0
-			(002) jeq      #0x60            jt 3	jf 36
+			(002) jeq      #0x60            jt 3	jf 35
 			(003) ldb      [6]
 			(004) ldx      #0x28
-			(005) jeq      #0x11            jt 33	jf 6
-			(006) jeq      #0x3b            jt 33	jf 7
+			(005) jeq      #0x11            jt 32	jf 6
+			(006) jeq      #0x3b            jt 32	jf 7
 			(007) jeq      #0x0             jt 11	jf 8
 			(008) jeq      #0x3c            jt 11	jf 9
 			(009) jeq      #0x2b            jt 11	jf 10
@@ -8628,23 +8647,22 @@ my @accept_blocks = (
 			(017) tax
 			(018) ld       M[0]
 			(019) ja       5
-			(020) jeq      #0x33            jt 21	jf 33
-			(021) txa
-			(022) ldb      [x + 0]
-			(023) st       M[0]
-			(024) txa
-			(025) add      #1
-			(026) tax
-			(027) ldb      [x + 0]
-			(028) add      #2
-			(029) mul      #4
-			(030) tax
-			(031) ld       M[0]
-			(032) ja       5
-			(033) add      #0
-			(034) jeq      #0x11            jt 35	jf 36
-			(035) ret      #262144
-			(036) ret      #0
+			(020) jeq      #0x33            jt 21	jf 32
+			(021) ldb      [x + 0]
+			(022) st       M[0]
+			(023) txa
+			(024) add      #1
+			(025) tax
+			(026) ldb      [x + 0]
+			(027) add      #2
+			(028) mul      #4
+			(029) tax
+			(030) ld       M[0]
+			(031) ja       5
+			(032) add      #0
+			(033) jeq      #0x11            jt 34	jf 35
+			(034) ret      #262144
+			(035) ret      #0
 			',
 	}, # ip6_protochain
 	{
@@ -8658,64 +8676,62 @@ my @accept_blocks = (
 		unopt => '
 			(000) ldb      [0]
 			(001) and      #0xf0
-			(002) jeq      #0x40            jt 3	jf 23
+			(002) jeq      #0x40            jt 3	jf 22
 			(003) ldb      [9]
 			(004) ldxb     4*([0]&0xf)
-			(005) jeq      #0x11            jt 21	jf 6
-			(006) jeq      #0x3b            jt 21	jf 7
+			(005) jeq      #0x11            jt 20	jf 6
+			(006) jeq      #0x3b            jt 20	jf 7
 			(007) add      #0
-			(008) jeq      #0x33            jt 9	jf 21
-			(009) txa
-			(010) ldb      [x + 0]
-			(011) st       M[1]
-			(012) txa
-			(013) add      #1
-			(014) tax
-			(015) ldb      [x + 0]
-			(016) add      #2
-			(017) mul      #4
-			(018) tax
-			(019) ld       M[1]
-			(020) ja       5
-			(021) add      #0
-			(022) jeq      #0x11            jt 58	jf 23
-			(023) ldb      [0]
-			(024) and      #0xf0
-			(025) jeq      #0x60            jt 26	jf 59
-			(026) ldb      [6]
-			(027) ldx      #0x28
-			(028) jeq      #0x11            jt 56	jf 29
-			(029) jeq      #0x3b            jt 56	jf 30
-			(030) jeq      #0x0             jt 34	jf 31
-			(031) jeq      #0x3c            jt 34	jf 32
-			(032) jeq      #0x2b            jt 34	jf 33
-			(033) jeq      #0x2c            jt 34	jf 43
-			(034) ldb      [x + 0]
-			(035) st       M[1]
-			(036) ldb      [x + 1]
-			(037) add      #1
-			(038) mul      #8
-			(039) add      x
-			(040) tax
-			(041) ld       M[1]
-			(042) ja       28
-			(043) jeq      #0x33            jt 44	jf 56
-			(044) txa
-			(045) ldb      [x + 0]
-			(046) st       M[1]
-			(047) txa
-			(048) add      #1
-			(049) tax
-			(050) ldb      [x + 0]
-			(051) add      #2
-			(052) mul      #4
-			(053) tax
-			(054) ld       M[1]
-			(055) ja       28
-			(056) add      #0
-			(057) jeq      #0x11            jt 58	jf 59
-			(058) ret      #262144
-			(059) ret      #0
+			(008) jeq      #0x33            jt 9	jf 20
+			(009) ldb      [x + 0]
+			(010) st       M[1]
+			(011) txa
+			(012) add      #1
+			(013) tax
+			(014) ldb      [x + 0]
+			(015) add      #2
+			(016) mul      #4
+			(017) tax
+			(018) ld       M[1]
+			(019) ja       5
+			(020) add      #0
+			(021) jeq      #0x11            jt 56	jf 22
+			(022) ldb      [0]
+			(023) and      #0xf0
+			(024) jeq      #0x60            jt 25	jf 57
+			(025) ldb      [6]
+			(026) ldx      #0x28
+			(027) jeq      #0x11            jt 54	jf 28
+			(028) jeq      #0x3b            jt 54	jf 29
+			(029) jeq      #0x0             jt 33	jf 30
+			(030) jeq      #0x3c            jt 33	jf 31
+			(031) jeq      #0x2b            jt 33	jf 32
+			(032) jeq      #0x2c            jt 33	jf 42
+			(033) ldb      [x + 0]
+			(034) st       M[1]
+			(035) ldb      [x + 1]
+			(036) add      #1
+			(037) mul      #8
+			(038) add      x
+			(039) tax
+			(040) ld       M[1]
+			(041) ja       27
+			(042) jeq      #0x33            jt 43	jf 54
+			(043) ldb      [x + 0]
+			(044) st       M[1]
+			(045) txa
+			(046) add      #1
+			(047) tax
+			(048) ldb      [x + 0]
+			(049) add      #2
+			(050) mul      #4
+			(051) tax
+			(052) ld       M[1]
+			(053) ja       27
+			(054) add      #0
+			(055) jeq      #0x11            jt 56	jf 57
+			(056) ret      #262144
+			(057) ret      #0
 			',
 	}, # protochain
 	{
@@ -13997,6 +14013,101 @@ my @apply_blocks = (
 		expr => 'geneve 11',
 		results => [0, 262144, 262144, 0, 262144, 0, 262144, 262144, 0, 262144],
 	},
+	{
+		name => 'ip_protochain_17_deepstack',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'ipv6_ext_headers.pcap',
+		expr => 'ip protochain 17',
+		results => [0],
+	},
+	{
+		name => 'ip6_protochain_17_deepstack',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'ipv6_ext_headers.pcap',
+		expr => 'ip6 protochain 17',
+		results => [65535],
+	},
+	{
+		name => 'ip6_protochain_51_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv6.pcap',
+		expr => 'ip6 protochain 51',
+		# AH is the first protocol header.
+		results => [65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535],
+	},
+	{
+		name => 'ip6_protochain_41_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv6.pcap',
+		expr => 'ip6 protochain 41',
+		# When an IPComp header is present, it precedes the inner
+		# IPv6 header, which no longer matches.
+		results => [65535, 65535, 0, 0, 0, 0, 0, 65535, 0, 0, 65535, 65535, 65535, 65535, 65535],
+	},
+	{
+		name => 'ip6_protochain_108_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv6.pcap',
+		expr => 'ip6 protochain 108',
+		results => [0, 0, 65535, 65535, 65535, 65535, 65535, 0, 65535, 65535, 0, 0, 0, 0, 0],
+	},
+	{
+		name => 'ip6_protochain_6_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv6.pcap',
+		expr => 'ip6 protochain 6',
+		# All TCP packets have the TCP header behind the inner IPv6 header (41).
+		results => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	},
+	{
+		name => 'ip6_protochain_17_mixed',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'ipv6_ah_modes.pcap',
+		expr => 'ip6 protochain 17',
+		results => [65535, 0],
+	},
+	{
+		name => 'ip6_protochain_41_mixed',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'ipv6_ah_modes.pcap',
+		expr => 'ip6 protochain 41',
+		results => [0, 65535],
+	},
+	{
+		name => 'ip_protochain_51_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv4.pcap',
+		expr => 'ip protochain 51',
+		results => [65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535],
+	},
+	{
+		name => 'ip_protochain_4_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv4.pcap',
+		expr => 'ip protochain 4',
+		results => [65535, 65535, 0, 0, 0, 65535, 0, 65535, 65535, 65535],
+	},
+	{
+		name => 'ip_protochain_108_tunnel',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'AH-IPcomp-IPv4.pcap',
+		expr => 'ip protochain 108',
+		results => [0, 0, 65535, 65535, 65535, 0, 65535, 0, 0, 0],
+	},
+	{
+		name => 'ip_protochain_51_transport',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'ah-ipip-ping.pcap',
+		expr => 'ip protochain 51',
+		results => [65535, 65535, 65535, 65535],
+	},
+	{
+		name => 'ip_protochain_1_transport',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		savefile => 'ah-ipip-ping.pcap',
+		expr => 'ip protochain 1',
+		results => [65535, 0, 0, 0],
+	},
 );
 
 # * name, DLT, expr, netmask and skip: same as in accept_blocks above
@@ -14015,12 +14126,6 @@ my @reject_tests = (
 		DLT => 'EN10MB',
 		expr => 'pppoes 65536',
 		errstr => 'PPPoE session number 65536 greater than maximum 65535',
-	},
-	{
-		name => 'mtp2_on_mtp3',
-		DLT => 'MTP3',
-		expr => 'fisu',
-		errstr => '\'fisu\' supported only on SS7',
 	},
 	{
 		name => 'mtp2_sio',
@@ -14081,12 +14186,6 @@ my @reject_tests = (
 		DLT => 'SUNATM',
 		expr => 'vci 65536',
 		errstr => 'VCI 65536 greater than maximum 65535',
-	},
-	{
-		name => 'wlan_on_eth',
-		DLT => 'EN10MB',
-		expr => 'type data',
-		errstr => '\'type/subtype\' not supported on Ethernet',
 	},
 	{
 		name => 'wlan_type',
@@ -14171,18 +14270,6 @@ my @reject_tests = (
 		DLT => 'RAW',
 		expr => 'ip6 host noeth-ipv4-noipv6.host123.libpcap.test',
 		errstr => "unknown host \'noeth-ipv4-noipv6.host123.libpcap.test' for specified address family",
-	},
-	{
-		name => 'broadcast_not_supported',
-		DLT => 'SLIP',
-		expr => 'broadcast',
-		errstr => '\'broadcast\' not supported on SLIP',
-	},
-	{
-		name => 'multicast_not_supported',
-		DLT => 'SLIP',
-		expr => 'multicast',
-		errstr => '\'multicast\' not supported on SLIP',
 	},
 # This test has been flaky because it depends on an external effect (DNS
 # lookup), which sometimes times out.  Let's disable it until there is a good
@@ -14361,10 +14448,10 @@ my @reject_tests = (
 		errstr => 'illegal port number',
 	},
 	{
-		name => 'vlan_not_supported',
-		DLT => 'RAW',
-		expr => 'vlan',
-		errstr => 'no VLAN support',
+		name => 'pppoes_and_vlan',
+		DLT => 'EN10MB',
+		expr => 'pppoes and vlan',
+		errstr => 'no VLAN support for',
 	},
 	{
 		name => 'vlan_invalid_id1',
@@ -14379,58 +14466,10 @@ my @reject_tests = (
 		errstr => 'syntax error',
 	},
 	{
-		name => 'mpls_not_supported',
-		DLT => 'RAW',
-		expr => 'mpls',
-		errstr => 'no MPLS support',
-	},
-	{
 		name => 'mpls_invalid_id',
 		DLT => 'EN10MB',
 		expr => 'mpls 1048576',
 		errstr => 'greater than maximum',
-	},
-	{
-		name => 'inbound_not_supported_linux',
-		skip => skip_os_not ('linux'),
-		DLT => 'EN10MB',
-		expr => 'inbound',
-		errstr => 'not a live capture',
-	},
-	{
-		name => 'outbound_not_supported_linux',
-		skip => skip_os_not ('linux'),
-		DLT => 'EN10MB',
-		expr => 'outbound',
-		errstr => 'not a live capture',
-	},
-	{
-		name => 'ifindex_not_supported_linux',
-		skip => skip_os_not ('linux'),
-		DLT => 'LINUX_SLL',
-		expr => 'ifindex 1',
-		errstr => 'not a live capture',
-	},
-	{
-		name => 'inbound_not_supported_other',
-		skip => skip_os ('linux'),
-		DLT => 'EN10MB',
-		expr => 'inbound',
-		errstr => 'not supported',
-	},
-	{
-		name => 'outbound_not_supported_other',
-		skip => skip_os ('linux'),
-		DLT => 'EN10MB',
-		expr => 'outbound',
-		errstr => 'not supported',
-	},
-	{
-		name => 'ifindex_not_supported_other',
-		skip => skip_os ('linux'),
-		DLT => 'EN10MB',
-		expr => 'ifindex 1',
-		errstr => 'not supported',
 	},
 	{
 		name => 'arcnet_address1',
@@ -14468,19 +14507,6 @@ my @reject_tests = (
 		netmask => '255.255.255.255',
 		expr => 'ip broadcast',
 		errstr => "netmask not known, so 'ip broadcast' not supported",
-	},
-	{
-		name => 'arp_protochain',
-		skip => skip_config_def1 ('NO_PROTOCHAIN'),
-		DLT => 'EN10MB',
-		expr => 'arp protochain 17',
-		errstr => '\'arp\' is not a valid qualifier for \'protochain\'',
-	},
-	{
-		name => 'arp_proto',
-		DLT => 'EN10MB',
-		expr => 'arp proto 17',
-		errstr => '\'arp\' is not a valid qualifier for \'proto\'',
 	},
 	{
 		name => 'arp_host_ipv4_ipv6',
@@ -14560,6 +14586,20 @@ my @reject_tests = (
 		DLT => 'RAW',
 		expr => 'ip6 protochain 256',
 		errstr => 'protocol number 256 greater than maximum 255',
+	},
+	{
+		name => 'geneve_and_protochain_4',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		DLT => 'EN10MB',
+		expr => 'geneve and protochain 4',
+		errstr => '\'protochain\' not supported with variable length headers',
+	},
+	{
+		name => 'vxlan_and_protochain_4',
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		DLT => 'EN10MB',
+		expr => 'vxlan and protochain 4',
+		errstr => '\'protochain\' not supported with variable length headers',
 	},
 	{
 		name => 'proto_invalid',
@@ -14724,22 +14764,52 @@ my @reject_tests = (
 		errstr => 'syntax error',
 	},
 	{
-		name => 'gateway_sunatm',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
-			skip_no_hosts(),
-		DLT => 'SUNATM',
-		expr => "gateway eth-ipv4-ipv6.host123.libpcap.test",
-		errstr => '\'gateway\' supported only on',
+		name => 'src_proto_NUM',
+		DLT => 'EN10MB',
+		expr => 'src proto 1',
+		errstr => 'syntax error',
 	},
 	{
-		name => 'gateway_raw',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
-			skip_no_hosts(),
-		DLT => 'RAW',
-		expr => "gateway eth-ipv4-ipv6.host123.libpcap.test",
-		errstr => '\'gateway\' supported only on',
+		name => 'dst_proto_NUM',
+		DLT => 'EN10MB',
+		expr => 'dst proto 1',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'src_proto_ID',
+		DLT => 'EN10MB',
+		expr => 'src proto \tcp',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'dst_proto_ID',
+		DLT => 'EN10MB',
+		expr => 'dst proto \tcp',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'src_protochain_NUM',
+		DLT => 'EN10MB',
+		expr => 'src protochain 1',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'dst_protochain_NUM',
+		DLT => 'EN10MB',
+		expr => 'dst protochain 1',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'src_protochain_ID',
+		DLT => 'EN10MB',
+		expr => 'src protochain \tcp',
+		errstr => 'syntax error',
+	},
+	{
+		name => 'dst_protochain_ID',
+		DLT => 'EN10MB',
+		expr => 'dst protochain \tcp',
+		errstr => 'syntax error',
 	},
 	# If "gateway" begins to support IPv6 in future, the reject tests below will
 	# fail and will need to be replaced with accept tests.
@@ -14749,15 +14819,6 @@ my @reject_tests = (
 		DLT => 'EN10MB',
 		expr => "gateway eth-ipv4-ipv6.host123.libpcap.test",
 		errstr => 'not supported in this configuration',
-	},
-	{
-		name => 'ip6_gateway',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
-			skip_no_hosts(),
-		DLT => 'EN10MB',
-		expr => "ip6 gateway eth-ipv4-ipv6.host123.libpcap.test",
-		errstr => '\'ip6\' is not a valid qualifier for \'gateway\'',
 	},
 	{
 		name => 'gateway_1',
@@ -14869,12 +14930,6 @@ my @reject_tests = (
 		DLT => 'RAW',
 		expr => 'link net net-10-20-30-0.libpcap.test',
 		errstr => '\'link\' is not a valid qualifier for \'ip net\'',
-	},
-	{
-		name => 'reason_congestion',
-		DLT => 'RAW',
-		expr => 'reason congestion',
-		errstr => '\'reason\' supported only on PFLOG linktype',
 	},
 	{
 		name => 'reason_invalid_PFLOG',
@@ -15056,86 +15111,722 @@ my @reject_tests = (
 	},
 );
 
-push @reject_tests, {
-	name => "noindex_${_}",
-	DLT => 'EN10MB',
-	expr => "${_}[0] == 0",
-	errstr => "'${_}' does not support the index operation",
-} foreach (qw{
-	ah
-	esp
-	aarp
-	iso
-	esis
-	isis
-	clnp
-	stp
-	ipx
-	netbeui
-	l1
-	l2
-	iih
-	snp
-	csnp
-	psnp
-	lsp
-});
+# "proto" qualifiers without any lexer-level aliases (the entries correspond
+# to Q_LINK~Q_CARP from gencode.h and are ordered by name).
+my %pqual_features = (
+	aarp => {
+	},
+	ah => {
+	},
+	arp => {
+		index => 1,
+		host => 1,
+		gateway => 1,
+	},
+	atalk => {
+		index => 1,
+	},
+	carp => {
+		index => 1,
+	},
+	clnp => {
+	},
+	csnp => {
+	},
+	decnet => {
+		index => 1,
+		host => 1,
+	},
+	esis => {
+	},
+	esp => {
+	},
+	icmp => {
+		index => 1,
+	},
+	icmp6 => {
+		index => 1,
+	},
+	igmp => {
+		index => 1,
+	},
+	igrp => {
+		index => 1,
+	},
+	iih => {
+	},
+	ip => {
+		index => 1,
+		host => 1,
+		gateway => 1,
+		protochain => 1,
+		proto => 1,
+	},
+	ip6 => {
+		index => 1,
+		host => 1,
+		protochain => 1,
+		proto => 1,
+	},
+	ipx => {
+	},
+	isis => {
+		proto => 1,
+	},
+	iso => {
+		proto => 1,
+	},
+	l1 => {
+	},
+	l2 => {
+	},
+	lat => {
+		index => 1,
+	},
+	link => {
+		index => 1,
+		host => 1,
+		proto => 1,
+	},
+	lsp => {
+	},
+	mopdl => {
+		index => 1,
+	},
+	moprc => {
+		index => 1,
+	},
+	netbeui => {
+	},
+	pim => {
+		index => 1,
+	},
+	psnp => {
+	},
+	radio => {
+		index => 1,
+	},
+	rarp => {
+		index => 1,
+		host => 1,
+		gateway => 1,
+	},
+	sca => {
+		index => 1,
+	},
+	sctp => {
+		index => 1,
+	},
+	snp => {
+	},
+	stp => {
+	},
+	tcp => {
+		index => 1,
+	},
+	udp => {
+		index => 1,
+	},
+	vrrp => {
+		index => 1,
+	},
+);
+
+sub pqual_feature {
+	my $name = shift;
+	my $feature = shift;
+	die if not exists $pqual_features{$name};
+	return exists $pqual_features{$name}{$feature} && $pqual_features{$name}{$feature} == 1;
+}
+
+sub pqual_names {
+	return keys %pqual_features;
+}
+
+sub pquals_with {
+	my $feature = shift;
+	my @ret;
+	foreach (pqual_names) {
+		next unless pqual_feature $_, $feature;
+		push @ret, $_;
+		last if $only_short;
+	}
+	return @ret;
+}
+
+sub pquals_without {
+	my $feature = shift;
+	my @ret;
+	foreach (pqual_names) {
+		next if pqual_feature $_, $feature;
+		push @ret, $_;
+		last if $only_short;
+	}
+	return @ret;
+}
+
+# All DLTs pcap_datalink_name_to_val() recognizes, ordered by name.
+my %DLTfeatures = (
+	A429 => {
+	},
+	A653_ICM => {
+	},
+	AOS => {
+	},
+	APPLE_IP_OVER_IEEE1394 => {
+		link_proto => 1, # gen_linktype() default case
+	},
+	ARCNET => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac8 => 1,
+	},
+	ARCNET_LINUX => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac8 => 1,
+	},
+	ATM_CLIP => {
+		link_proto => 1,
+	},
+	ATM_RFC1483 => {
+		link_proto => 1,
+		llc => 1,
+	},
+	ATSC_ALP => {
+	},
+	AUERSWALD_LOG => {
+	},
+	AX25_KISS => {
+	},
+	BACNET_MS_TP => {
+		link_proto => 1,
+	},
+	BLUETOOTH_BREDR_BB => {
+	},
+	BLUETOOTH_HCI_H4 => {
+	},
+	BLUETOOTH_HCI_H4_WITH_PHDR => {
+	},
+	BLUETOOTH_LE_LL => {
+	},
+	BLUETOOTH_LE_LL_WITH_PHDR => {
+	},
+	BLUETOOTH_LINUX_MONITOR => {
+	},
+	CAN20B => {
+	},
+	CAN_SOCKETCAN => {
+	},
+	C_HDLC => {
+		link_proto => 1,
+		mpls => 1,
+	},
+	DBUS => {
+	},
+	DECT => {
+	},
+	DECT_NR => {
+	},
+	DISPLAYPORT_AUX => {
+	},
+	DOCSIS => {
+	},
+	DOCSIS31_XRA31 => {
+	},
+	DSA_TAG_BRCM => {
+	},
+	DSA_TAG_BRCM_PREPEND => {
+	},
+	DSA_TAG_DSA => {
+	},
+	DSA_TAG_EDSA => {
+	},
+	DVB_CI => {
+	},
+	EBHSCR => {
+	},
+	ELEE => {
+	},
+	EN10MB => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		mpls => 1,
+		llc => 1,
+	},
+	ENC => {
+		link_proto => 1,
+	},
+	EPON => {
+	},
+	ERF => {
+		ss7 => 1,
+	},
+	ERF_ETH => {
+	},
+	ERF_POS => {
+	},
+	ETHERNET_MPACKET => {
+	},
+	ETW => {
+	},
+	FC_2 => {
+	},
+	FC_2_WITH_FRAME_DELIMS => {
+	},
+	FDDI => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		llc => 1,
+	},
+	FIRA_UCI => {
+	},
+	FRELAY => {
+		link_proto => 1,
+	},
+	GPF_F => {
+	},
+	GPF_T => {
+	},
+	GPRS_LLC => {
+	},
+	I2C_LINUX => {
+	},
+	IEEE802 => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		llc => 1,
+	},
+	IEEE802_11 => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		llc => 1,
+		wlan => 1,
+		var_off_linkpl => 1,
+	},
+	IEEE802_11_RADIO => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		llc => 1,
+		wlan => 1,
+		var_off_linkpl => 1,
+	},
+	IEEE802_11_RADIO_AVS => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		llc => 1,
+		wlan => 1,
+		var_off_linkpl => 1,
+	},
+	IEEE802_15_4 => {
+	},
+	IEEE802_15_4_LINUX => {
+	},
+	IEEE802_15_4_NOFCS => {
+	},
+	IEEE802_15_4_NONASK_PHY => {
+	},
+	IEEE802_15_4_TAP => {
+	},
+	IEEE802_16_MAC_CPS => {
+	},
+	IEEE802_16_MAC_CPS_RADIO => {
+	},
+	INFINIBAND => {
+	},
+	IPMB_KONTRON => {
+	},
+	IPMI_HPM_2 => {
+	},
+	IPNET => {
+		link_proto => 1,
+		inout => 1,
+	},
+	IPOIB => {
+	},
+	IP_OVER_FC => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+	},
+	IPV4 => {
+		link_proto => 1,
+	},
+	IPV6 => {
+		link_proto => 1,
+	},
+	ISO_14443 => {
+	},
+	JUNIPER_ATM1 => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_ATM2 => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_ATM_CEMIC => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_CHDLC => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_ES => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_ETHER => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_FIBRECHANNEL => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_FRELAY => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_GGSN => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_ISM => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_MFR => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_MLFR => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_MLPPP => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_MONITOR => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_PIC_PEER => {
+	},
+	JUNIPER_PPP => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_PPPOE => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_PPPOE_ATM => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_SERVICES => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_SRX_E2E => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_ST => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_VP => {
+		link_proto => 1,
+		inout => 1,
+	},
+	JUNIPER_VS => {
+		link_proto => 1,
+		inout => 1,
+	},
+	LINUX_EVDEV => {
+	},
+	LINUX_IRDA => {
+	},
+	LINUX_LAPD => {
+	},
+	LINUX_SLL => {
+		link_proto => 1,
+		inout => 1,
+	},
+	LINUX_SLL2 => {
+		link_proto => 1, # gen_linktype() default case
+		inout => 1,
+		ifindex => 1,
+	},
+	LOOP => {
+		link_proto => 1,
+	},
+	LTALK => {
+		link_proto => 1,
+	},
+	MDB => {
+	},
+	MFR => {
+	},
+	MPEG_2_TS => {
+	},
+	MPLS => {
+	},
+	MTP2 => {
+		ss7 => 1,
+	},
+	MTP2_WITH_PHDR => {
+		ss7 => 1,
+	},
+	MTP3 => {
+	},
+	MUX27010 => {
+	},
+	NETANALYZER => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		mpls => 1,
+	},
+	NETANALYZER_NG => {
+	},
+	NETANALYZER_TRANSPARENT => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		mpls => 1,
+	},
+	NETLINK => {
+	},
+	NFC_LLCP => {
+	},
+	NFLOG => {
+	},
+	NG40 => {
+	},
+	NORDIC_BLE => {
+	},
+	NULL => {
+		link_proto => 1,
+	},
+	OPENFLOW => {
+	},
+	OPENVIZSLA => {
+	},
+	PFLOG => {
+		link_proto => 1,
+		inout => 1,
+		pflog => 1,
+	},
+	PFSYNC => {
+	},
+	PKTAP => {
+	},
+	PPI => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		llc => 1,
+		wlan => 1,
+		var_off_linkpl => 1,
+	},
+	PPP => {
+		link_proto => 1,
+		mpls => 1,
+	},
+	PPP_BSDOS => {
+		link_proto => 1,
+	},
+	PPP_ETHER => {
+		link_proto => 1,
+	},
+	PPP_PPPD => {
+		link_proto => 1,
+		inout => 1,
+	},
+	PPP_SERIAL => {
+		link_proto => 1,
+	},
+	PRISM_HEADER => {
+		link_proto => 1,
+		link_broadcast => 1,
+		link_multicast => 1,
+		link_host_mac48 => 1,
+		vlan => 1,
+		llc => 1,
+		wlan => 1,
+		var_off_linkpl => 1,
+	},
+	PROFIBUS_DL => {
+	},
+	RAIF1 => {
+	},
+	RAW => {
+		link_proto => 1,
+	},
+	RDS => {
+	},
+	RTAC_SERIAL => {
+	},
+	SCCP => {
+	},
+	SCTP => {
+	},
+	SDLC => {
+	},
+	SILABS_DEBUG_CHANNEL => {
+	},
+	SITA => {
+	},
+	SLIP => {
+		link_proto => 1,
+		inout => 1,
+	},
+	SLIP_BSDOS => {
+		link_proto => 1,
+	},
+	STANAG_5066_D_PDU => {
+	},
+	SUNATM => {
+		link_proto => 1,
+		llc => 1,
+		atm => 1,
+	},
+	SYMANTEC_FIREWALL => {
+		link_proto => 1, # gen_linktype() default case
+	},
+	TI_LLN_SNIFFER => {
+	},
+	USB_2_0 => {
+	},
+	USB_2_0_FULL_SPEED => {
+	},
+	USB_2_0_HIGH_SPEED => {
+	},
+	USB_2_0_LOW_SPEED => {
+	},
+	USB_DARWIN => {
+	},
+	USB_FREEBSD => {
+	},
+	USB_LINUX => {
+	},
+	USB_LINUX_MMAPPED => {
+	},
+	USBPCAP => {
+	},
+	VPP_DISPATCH => {
+	},
+	VSOCK => {
+	},
+	WATTSTOPPER_DLM => {
+	},
+	WIHART => {
+	},
+	ZBOSS_NCP => {
+	},
+	ZWAVE_R1_R2 => {
+	},
+	ZWAVE_R3 => {
+	},
+	Z_WAVE_SERIAL => {
+	},
+	ZWAVE_TAP => {
+	},
+);
+
+sub DLT_names {
+	return keys %DLTfeatures;
+}
+
+sub DLT_feature {
+	my $name = shift;
+	my $feature = shift;
+	die if not exists $DLTfeatures{$name};
+	return exists $DLTfeatures{$name}{$feature} && $DLTfeatures{$name}{$feature} == 1;
+}
+
+sub DLTs_with {
+	my $feature = shift;
+	my @ret;
+	foreach (DLT_names) {
+		next unless DLT_feature $_, $feature;
+		push @ret, $_;
+		last if $only_short;
+	}
+	return @ret;
+}
+
+sub DLTs_without {
+	my $feature = shift;
+	my @ret;
+	foreach (DLT_names) {
+		next if DLT_feature $_, $feature;
+		push @ret, $_;
+		last if $only_short;
+	}
+	return @ret;
+}
+
+# gen_load_internal() -> default
+foreach (pquals_without 'index') {
+	push @reject_tests, {
+		name => "noindex_${_}",
+		DLT => 'EN10MB',
+		expr => "${_}[0] == 0",
+		errstr => "'${_}' does not support the index operation",
+	};
+}
 
 # "link host IPV4ADDR" and "link net IPV4ADDR" use a different code path with
 # a different error message and are tested above.  "link net NAME" uses yet
 # another different code path with yet another different error message and is
 # tested above.  "(link|ip|rarp|arp|decnet|ip6) host" can be valid syntax or
 # not (depending on the primitive ID), which is tested above.
-foreach (qw(
-	sctp
-	tcp
-	udp
-	icmp
-	igmp
-	igrp
-	atalk
-	lat
-	sca
-	moprc
-	mopdl
-	icmp6
-	ah
-	esp
-	pim
-	vrrp
-	aarp
-	iso
-	esis
-	isis
-	clnp
-	stp
-	ipx
-	netbeui
-	l1
-	l2
-	iih
-	snp
-	csnp
-	psnp
-	lsp
-	radio
-	carp
-)) {
-	# HID -> gen_ncode() -> gen_host()
+foreach (pquals_without 'host') {
+	# HID -> gen_ncode() -> gen_host() -> default
 	push @reject_tests, {
 		name => "inv_qual_${_}_host_ipv4addr",
 		DLT => 'EN10MB',
 		expr => "${_} host 1.2.3.4",
 		errstr => "'${_}' is not a valid qualifier for 'ip host'",
 	};
-	# HID -> gen_ncode() -> gen_host()
+	# HID -> gen_ncode() -> gen_host() -> default
 	push @reject_tests, {
 		name => "inv_qual_${_}_net_ipv4addr",
 		DLT => 'EN10MB',
 		expr => "${_} net 1.2.3.4",
 		errstr => "'${_}' is not a valid qualifier for 'ip net'",
 	};
-	# HID6 -> gen_mcode6() -> gen_host6()
+	# HID6 -> gen_mcode6() -> gen_host6() -> default
 	push @reject_tests, {
 		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_host_ipv6addr",
@@ -15143,7 +15834,7 @@ foreach (qw(
 		expr => "${_} host fe80::",
 		errstr => "'${_}' is not a valid qualifier for 'ip6 host'",
 	};
-	# HID6 -> gen_mcode6() -> gen_host6()
+	# HID6 -> gen_mcode6() -> gen_host6() -> default
 	push @reject_tests, {
 		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_net_ipv6addr",
@@ -15152,14 +15843,14 @@ foreach (qw(
 		errstr => "'${_}' is not a valid qualifier for 'ip6 net'",
 	};
 
-	# HID NETMASK HID -> gen_mcode()
+	# HID NETMASK HID -> gen_mcode() -> default
 	push @reject_tests, {
 		name => "inv_qual_${_}_host_ipv4mask",
 		DLT => 'EN10MB',
 		expr => "${_} host 1.2.3.0 mask 255.255.255.0",
 		errstr => 'Mask syntax for networks only',
 	};
-	# HID NETMASK HID -> gen_mcode() -> gen_host()
+	# HID NETMASK HID -> gen_mcode() -> gen_host() -> default
 	push @reject_tests, {
 		name => "inv_qual_${_}_net_ipv4mask",
 		DLT => 'EN10MB',
@@ -15168,21 +15859,21 @@ foreach (qw(
 	};
 	# ("mask" is IPv4-only)
 
-	# HID '/' NUM -> gen_mcode()
+	# HID '/' NUM -> gen_mcode() -> default
 	push @reject_tests, {
 		name => "inv_qual_${_}_host_ipv4cidr",
 		DLT => 'EN10MB',
 		expr => "${_} host 1.2.3.0/24",
 		errstr => 'Mask syntax for networks only',
 	};
-	# HID '/' NUM -> gen_mcode() -> gen_host()
+	# HID '/' NUM -> gen_mcode() -> gen_host() -> default
 	push @reject_tests, {
 		name => "inv_qual_${_}_net_ipv4cidr",
 		DLT => 'EN10MB',
 		expr => "${_} net 1.2.3.0/24",
 		errstr => "'${_}' is not a valid qualifier for 'ip net'",
 	};
-	# HID6 '/' NUM -> gen_mcode6()
+	# HID6 '/' NUM -> gen_mcode6() -> default
 	push @reject_tests, {
 		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_host_ipv6cidr",
@@ -15190,7 +15881,7 @@ foreach (qw(
 		expr => "${_} host fe80::/16",
 		errstr => 'Mask syntax for networks only',
 	};
-	# HID6 '/' NUM -> gen_mcode6() -> gen_host6()
+	# HID6 '/' NUM -> gen_mcode6() -> gen_host6() -> default
 	push @reject_tests, {
 		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_net_ipv6cidr",
@@ -15199,7 +15890,7 @@ foreach (qw(
 		errstr => "'${_}' is not a valid qualifier for 'ip6 net'",
 	};
 
-	# ID -> gen_scode() -> gen_host()
+	# ID -> gen_scode() -> gen_host() -> default
 	push @reject_tests, {
 		skip => skip_no_hosts(),
 		name => "inv_qual_${_}_host_ipv4name",
@@ -15207,7 +15898,7 @@ foreach (qw(
 		expr => "${_} host noeth-ipv4-noipv6.host123.libpcap.test",
 		errstr => "'${_}' is not a valid qualifier for 'ip host'",
 	};
-	# ID -> gen_scode() -> gen_host()
+	# ID -> gen_scode() -> gen_host() -> default
 	push @reject_tests, {
 		skip => skip_no_networks(),
 		name => "inv_qual_${_}_net_ipv4name",
@@ -15215,7 +15906,7 @@ foreach (qw(
 		expr => "${_} net net-10-20-30-0.libpcap.test",
 		errstr => "'${_}' is not a valid qualifier for 'ip net'",
 	};
-	# ID -> gen_scode() -> gen_host6()
+	# ID -> gen_scode() -> gen_host6() -> default
 	push @reject_tests, {
 		skip => skip_config_undef ('INET6') || skip_no_hosts(),
 		name => "inv_qual_${_}_host_ipv6name",
@@ -15226,45 +15917,8 @@ foreach (qw(
 	# (IPv6 networks cannot have names)
 }
 
-foreach (qw(
-	link
-	sctp
-	tcp
-	udp
-	icmp
-	igmp
-	igrp
-	atalk
-	decnet
-	lat
-	sca
-	moprc
-	mopdl
-	ip6
-	icmp6
-	ah
-	esp
-	pim
-	vrrp
-	aarp
-	iso
-	esis
-	isis
-	clnp
-	stp
-	ipx
-	netbeui
-	l1
-	l2
-	iih
-	snp
-	csnp
-	psnp
-	lsp
-	radio
-	carp
-)) {
-	# ID -> gen_scode() -> gen_host6()
+# ID -> gen_scode() -> gen_gateway() -> default
+foreach (pquals_without 'gateway') {
 	push @reject_tests, {
 		skip => skip_config_def1 ('INET6') ||
 			skip_no_ethers() ||
@@ -15273,6 +15927,339 @@ foreach (qw(
 		DLT => 'EN10MB',
 		expr => "${_} gateway eth-ipv4-noipv6.host123.libpcap.test",
 		errstr => "'${_}' is not a valid qualifier for 'gateway'",
+	};
+}
+
+foreach my $pq (pqual_names) {
+	# HID -> gen_ncode() -> case Q_GATEWAY
+	push @reject_tests, {
+		name => "${pq}_gateway_HID",
+		skip => skip_config_def1 ('INET6'),
+		DLT => 'EN10MB',
+		expr => "$pq gateway 11.12.13.14",
+		errstr => $pq eq 'decnet' ?
+			'invalid DECnet address \'11.12.13.14\'' :
+			'\'gateway\' requires a name',
+	};
+	# HID
+	push @reject_tests, {
+		name => "${pq}_${_}_HID",
+		skip => $_ eq 'protochain' ? skip_config_def1 ('NO_PROTOCHAIN') : '',
+		DLT => 'EN10MB',
+		expr => "$pq $_ 11.12.13.14",
+		errstr => "'$_' qualifier applied to IPv4 address",
+	} foreach qw(port portrange proto protochain);
+	# HID '/' NUM -> gen_mcode() -> default
+	push @reject_tests, {
+		name => "${pq}_gateway_HID_NUM",
+		DLT => 'EN10MB',
+		expr => "$pq gateway 11.12.0.0/16",
+		errstr => 'Mask syntax for networks only',
+	};
+	# HID '/' NUM
+	push @reject_tests, {
+		name => "${pq}_${_}_HID_NUM",
+		skip => $_ eq 'protochain' ? skip_config_def1 ('NO_PROTOCHAIN') : '',
+		DLT => 'EN10MB',
+		expr => "$pq $_ 11.12.0.0/16",
+		errstr => "'$_' qualifier applied to IPv4 address and prefix length",
+	} foreach qw(port portrange proto protochain);
+	# HID NETMASK HID -> gen_mcode() -> default
+	push @reject_tests, {
+		name => "${pq}_gateway_HID_mask_HID",
+		DLT => 'EN10MB',
+		expr => "$pq gateway 11.12.0.0 mask 255.255.0.0",
+		errstr => 'Mask syntax for networks only',
+	};
+	# HID NETMASK HID
+	push @reject_tests, {
+		name => "${pq}_${_}_HID_mask_HID",
+		skip => $_ eq 'protochain' ? skip_config_def1 ('NO_PROTOCHAIN') : '',
+		DLT => 'EN10MB',
+		expr => "$pq $_ 11.12.0.0 mask 255.255.0.0",
+		errstr => "'$_' qualifier applied to IPv4 address and netmask",
+	} foreach qw(port portrange proto protochain);
+	# HID6 -> gen_mcode6() -> default
+	push @reject_tests, {
+		name => "${pq}_gateway_HID6",
+		skip => skip_config_undef ('INET6'),
+		DLT => 'EN10MB',
+		expr => "$pq gateway fe80::0",
+		errstr => 'invalid qualifier against IPv6 address',
+	};
+	# HID6
+	push @reject_tests, {
+		name => "${pq}_${_}_HID6",
+		skip => $_ eq 'protochain' ?
+			(skip_config_def1 ('NO_PROTOCHAIN') || skip_config_undef ('INET6')) :
+			skip_config_undef ('INET6'),
+		DLT => 'EN10MB',
+		expr => "$pq $_ fe80::0",
+		errstr => "'$_' qualifier applied to IPv6 address",
+	} foreach qw(port portrange proto protochain);
+	# HID6 '/' NUM -> gen_mcode6() -> default
+	push @reject_tests, {
+		name => "${pq}_gateway_HID6_NUM",
+		skip => skip_config_undef ('INET6'),
+		DLT => 'EN10MB',
+		expr => "$pq gateway fe80::0/64",
+		errstr => 'invalid qualifier against IPv6 address',
+	};
+	# HID6 '/' NUM
+	push @reject_tests, {
+		name => "${pq}_${_}_HID6_NUM",
+		skip => $_ eq 'protochain' ?
+			(skip_config_def1 ('NO_PROTOCHAIN') || skip_config_undef ('INET6')) :
+			skip_config_undef ('INET6'),
+		DLT => 'EN10MB',
+		expr => "$pq $_ fe80::0/64",
+		errstr => "'$_' qualifier applied to IPv6 address and prefix length",
+	} foreach qw(port portrange proto protochain);
+	last if $only_short;
+}
+
+foreach (pquals_without 'protochain') {
+	# pnum -> gen_ncode() -> case Q_PROTOCHAIN -> gen_protochain() -> default
+	push @reject_tests, {
+		name => "${_}_protochain_17",
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		DLT => 'EN10MB',
+		expr => "${_} protochain 17",
+		errstr => $_ eq 'decnet' ?
+			'invalid DECnet address \'17\'' :
+			"'${_}' is not a valid qualifier for 'protochain'",
+	};
+	# ID -> gen_scode() -> case Q_PROTOCHAIN -> lookup_proto()
+	push @reject_tests, {
+		name => "${_}_protochain_tcp",
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		DLT => 'EN10MB',
+		expr => "${_} protochain \\tcp",
+		errstr => $_ eq 'iso' ? 'unknown osi proto \'tcp\'' :
+			$_ eq 'link' ? 'unknown ether proto \'tcp\'' :
+			'unknown protocol: tcp',
+	};
+}
+
+foreach (pquals_without 'proto') {
+	# pnum -> gen_ncode() -> case Q_PROTO -> gen_proto() -> default
+	push @reject_tests, {
+		name => "${_}_proto_17",
+		DLT => 'EN10MB',
+		expr => "${_} proto 17",
+		errstr => $_ eq 'decnet' ?
+			'invalid DECnet address \'17\'' :
+			"'${_}' is not a valid qualifier for 'proto'",
+	};
+	# ID -> gen_scode() -> case Q_PROTO -> lookup_proto()
+	push @reject_tests, {
+		name => "${_}_proto_tcp",
+		DLT => 'EN10MB',
+		expr => "${_} proto \\tcp",
+		errstr => 'unknown protocol: tcp',
+	};
+	last if $only_short;
+}
+
+# Use a separate foreach loop for each feature because different loops skip
+# different DLTs and can terminate early.
+
+# gen_linktype() -> default
+foreach (DLTs_without 'link_proto') {
+	push @reject_tests, {
+		name => "link_proto_1_${_}",
+		DLT => $_,
+		expr => 'link proto 1',
+		errstr => 'link-layer type filtering not implemented for',
+	};
+}
+
+# gen_broadcast() -> case Q_LINK -> default
+foreach (DLTs_without 'link_broadcast') {
+	push @reject_tests, {
+		name => "link_broadcast_${_}",
+		DLT => $_,
+		expr => 'link broadcast',
+		errstr => '\'broadcast\' not supported on',
+	};
+}
+
+# gen_multicast() -> case Q_LINK -> default
+foreach (DLTs_without 'link_multicast') {
+	push @reject_tests, {
+		name => "link_multicast_${_}",
+		DLT => $_,
+		expr => 'link multicast',
+		errstr => '\'multicast\' not supported on',
+	};
+}
+
+# gen_vlan() -> default
+foreach (DLTs_without 'vlan') {
+	push @reject_tests, {
+		name => "vlan_${_}",
+		DLT => $_,
+		expr => 'vlan',
+		errstr => 'no VLAN support for',
+	};
+}
+
+# gen_mpls_internal() -> default
+foreach (DLTs_without 'mpls') {
+	push @reject_tests, {
+		name => "mpls_${_}",
+		DLT => $_,
+		expr => 'mpls',
+		errstr => 'no MPLS support for',
+	};
+}
+
+# gen_llc_internal() -> default
+foreach (DLTs_without 'llc') {
+	push @reject_tests, {
+		name => "llc_${_}",
+		DLT => $_,
+		expr => 'llc',
+		errstr => '\'llc\' not supported on',
+	};
+}
+
+foreach (DLTs_without 'wlan') {
+	# gen_p80211_type() -> default
+	push @reject_tests, {
+		name => "type_data_${_}",
+		DLT => $_,
+		expr => 'type data',
+		errstr => '\'type/subtype\' not supported on',
+	};
+	# gen_p80211_fcdir() -> default
+	push @reject_tests, {
+		name => "dir_fromds_${_}",
+		DLT => $_,
+		expr => 'dir fromds',
+		errstr => '\'dir\' not supported on',
+	};
+}
+
+# gen_acode() -> default
+foreach (DLTs_without 'link_host_mac8') {
+	push @reject_tests, {
+		name => "link_host_21_${_}",
+		DLT => $_,
+		expr => 'link host $21',
+		errstr => 'aid supported only on ARCnet',
+	};
+}
+
+# assert_ss7() -> default
+foreach (DLTs_without 'ss7') {
+	push @reject_tests, {
+		name => "fisu_${_}",
+		DLT => $_,
+		expr => 'fisu',
+		errstr => '\'fisu\' supported only on SS7',
+	};
+}
+
+foreach (DLTs_without 'link_host_mac48') {
+	# gen_gateway() -> case Q_DEFAULT -> default
+	push @reject_tests, {
+		name => "gateway_name_${_}",
+		skip => skip_config_def1 ('INET6') ||
+			skip_no_ethers() ||
+			skip_no_hosts(),
+		DLT => $_,
+		expr => 'gateway eth-ipv4-noipv6.host123.libpcap.test',
+		errstr => '\'gateway\' supported only on ethernet/FDDI/token ring/802.11/ATM LANE/Fibre Channel',
+	};
+	# gen_scode() -> case Q_DEFAULT -> Q_LINK
+	push @reject_tests, {
+		name => "link_host_name_${_}",
+		skip => skip_no_ethers(),
+		DLT => $_,
+		expr => 'link host eth-noipv4-noipv6.host123.libpcap.test',
+		errstr => 'only ethernet/FDDI/token ring/802.11/ATM LANE/Fibre Channel supports link-level host name',
+	};
+}
+
+# gen_inbound_outbound() -> default
+foreach (DLTs_without 'inout') {
+	push @reject_tests, {
+		name => "inbound_linux_${_}",
+		skip => skip_os_not ('linux'),
+		DLT => $_,
+		expr => 'inbound',
+		errstr => 'not a live capture',
+	};
+	push @reject_tests, {
+		name => "outbound_linux_${_}",
+		skip => skip_os_not ('linux'),
+		DLT => $_,
+		expr => 'outbound',
+		errstr => 'not a live capture',
+	};
+	push @reject_tests, {
+		name => "inbound_other_${_}",
+		skip => skip_os ('linux'),
+		DLT => $_,
+		expr => 'inbound',
+		errstr => 'not supported on',
+	};
+	push @reject_tests, {
+		name => "outbound_other_${_}",
+		skip => skip_os ('linux'),
+		DLT => $_,
+		expr => 'outbound',
+		errstr => 'not supported on',
+	};
+}
+
+# assert_pflog() -> default
+foreach (DLTs_without 'pflog') {
+	push @reject_tests, {
+		name => "reason_congestion_${_}",
+		DLT => $_,
+		expr => 'reason congestion',
+		errstr => '\'reason\' supported only on PFLOG linktype',
+	};
+}
+
+# assert_atm() -> default
+foreach (DLTs_without 'atm') {
+	push @reject_tests, {
+		name => "vpi_1_${_}",
+		DLT => $_,
+		expr => 'vpi 1',
+		errstr => '\'vpi\' supported only on SUNATM',
+	};
+}
+
+# gen_ifindex -> default
+foreach (DLTs_without 'ifindex') {
+	push @reject_tests, {
+		name => "ifindex_1_${_}",
+		skip => skip_os ('linux'),
+		DLT => $_,
+		expr => 'ifindex 1',
+		errstr => '\'ifindex\' not supported on',
+	};
+	push @reject_tests, {
+		name => "ifindex_2_${_}",
+		skip => skip_os_not ('linux'),
+		DLT => $_,
+		expr => 'ifindex 2',
+		errstr => 'not a live capture',
+	};
+}
+
+# the prerequisite in gen_protochain()
+foreach (DLTs_with 'var_off_linkpl') {
+	push @reject_tests, {
+		name => "protochain_4_${_}",
+		skip => skip_config_def1 ('NO_PROTOCHAIN'),
+		DLT => $_,
+		expr => 'protochain 4',
+		errstr => '\'protochain\' not supported with variable length headers',
 	};
 }
 
