@@ -3007,7 +3007,6 @@ my @accept_blocks = (
 	{
 		name => 'ether_proto_ip6',
 		DLT => 'EN10MB',
-		skip => skip_config_undef ('INET6'),
 		aliases => ['ether proto \ip6'],
 		unopt => '
 			(000) ldh      [12]
@@ -3587,7 +3586,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_LINUX_SLL
 	{
 		name => 'link_proto_ip6_LINUX_SLL',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'LINUX_SLL',
 		aliases => ['link proto \ip6'], # gen_linux_sll_linktype() default case
 		unopt => '
@@ -3725,7 +3723,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_RAW
 	{
 		name => 'link_proto_ip6_RAW',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -3757,7 +3754,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_IPV4
 	{
 		name => 'link_proto_ip6_IPV4',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'IPV4',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -3769,7 +3765,6 @@ my @accept_blocks = (
 	}, # link_proto_ip6_IPV4
 	{
 		name => 'link_proto_ip6_IPV6',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'IPV6',
 		aliases => ['link proto \ip6'],
 		opt => '
@@ -3802,7 +3797,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_PPP
 	{
 		name => 'link_proto_ip6_PPP',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'PPP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -3937,7 +3931,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_PPP_BSDOS
 	{
 		name => 'link_proto_ip6_PPP_BSDOS',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'PPP_BSDOS',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -3992,8 +3985,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_5LE_NULL',
 		skip => skip_big_endian() ||
-			skip_os_not ('haiku') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('haiku'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4006,8 +3998,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_10LE_NULL',
 		skip => skip_big_endian() ||
-			skip_os_not ('linux') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('linux'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4020,8 +4011,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_10BE_NULL',
 		skip => skip_little_endian() ||
-			skip_os_not ('linux') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('linux'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4034,8 +4024,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_22BE_NULL',
 		skip => skip_little_endian() ||
-			skip_os_not ('hpux') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('hpux'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4048,8 +4037,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_24LE_NULL',
 		skip => skip_big_endian() ||
-			(skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')) ||
-			skip_config_undef ('INET6'),
+			(skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4062,8 +4050,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_24BE_NULL',
 		skip => skip_little_endian() ||
-			(skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')) ||
-			skip_config_undef ('INET6'),
+			(skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4076,8 +4063,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_26LE_NULL',
 		skip => skip_big_endian() ||
-			skip_os_not ('solaris') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('solaris'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4090,8 +4076,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_26BE_NULL',
 		skip => skip_little_endian() ||
-			skip_os_not ('solaris') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('solaris'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4104,8 +4089,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_28LE_NULL',
 		skip => skip_big_endian() ||
-			(skip_os_not ('dragonfly') && skip_os_not ('freebsd')) ||
-			skip_config_undef ('INET6'),
+			(skip_os_not ('dragonfly') && skip_os_not ('freebsd')),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4118,8 +4102,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_28BE_NULL',
 		skip => skip_little_endian() ||
-			(skip_os_not ('dragonfly') && skip_os_not ('freebsd')) ||
-			skip_config_undef ('INET6'),
+			(skip_os_not ('dragonfly') && skip_os_not ('freebsd')),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4132,8 +4115,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_30LE_NULL',
 		skip => skip_big_endian() ||
-			skip_os_not ('darwin') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('darwin'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4146,8 +4128,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_30BE_NULL',
 		skip => skip_little_endian() ||
-			skip_os_not ('darwin') ||
-			skip_config_undef ('INET6'),
+			skip_os_not ('darwin'),
 		DLT => 'NULL',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4185,8 +4166,7 @@ my @accept_blocks = (
 	{
 		name => 'link_proto_ip6_28LE_ENC',
 		skip => skip_big_endian() ||
-			(skip_os_not ('dragonfly') && skip_os_not ('freebsd')) ||
-			skip_config_undef ('INET6'),
+			(skip_os_not ('dragonfly') && skip_os_not ('freebsd')),
 		DLT => 'ENC',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4225,8 +4205,7 @@ my @accept_blocks = (
 	}, # link_proto_ip_2_LOOP
 	{
 		name => 'link_proto_ip6_5_LOOP',
-		skip => skip_os_not ('haiku') ||
-			skip_config_undef ('INET6'),
+		skip => skip_os_not ('haiku'),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4238,8 +4217,7 @@ my @accept_blocks = (
 	}, # link_proto_ip6_5_LOOP
 	{
 		name => 'link_proto_ip6_10_LOOP',
-		skip => skip_os_not ('linux') ||
-			skip_config_undef ('INET6'),
+		skip => skip_os_not ('linux'),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4251,8 +4229,7 @@ my @accept_blocks = (
 	}, # link_proto_ip6_10_LOOP
 	{
 		name => 'link_proto_ip6_22_LOOP',
-		skip => skip_os_not ('hpux') ||
-			skip_config_undef ('INET6'),
+		skip => skip_os_not ('hpux'),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4264,8 +4241,7 @@ my @accept_blocks = (
 	}, # link_proto_ip6_22_LOOP
 	{
 		name => 'link_proto_ip6_24_LOOP',
-		skip => (skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')) ||
-			skip_config_undef ('INET6'),
+		skip => (skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4277,8 +4253,7 @@ my @accept_blocks = (
 	}, # link_proto_ip6_24_LOOP
 	{
 		name => 'link_proto_ip6_26_LOOP',
-		skip => skip_os_not ('solaris') ||
-			skip_config_undef ('INET6'),
+		skip => skip_os_not ('solaris'),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4290,8 +4265,7 @@ my @accept_blocks = (
 	}, # link_proto_ip6_26_LOOP
 	{
 		name => 'link_proto_ip6_28_LOOP',
-		skip => (skip_os_not ('dragonfly') && skip_os_not ('freebsd')) ||
-			skip_config_undef ('INET6'),
+		skip => (skip_os_not ('dragonfly') && skip_os_not ('freebsd')),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4303,8 +4277,7 @@ my @accept_blocks = (
 	}, # link_proto_ip6_28_LOOP
 	{
 		name => 'link_proto_ip6_30_LOOP',
-		skip => skip_os_not ('darwin') ||
-			skip_config_undef ('INET6'),
+		skip => skip_os_not ('darwin'),
 		DLT => 'LOOP',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4328,8 +4301,7 @@ my @accept_blocks = (
 	}, # link_proto_ip_2_PFLOG
 	{
 		name => 'link_proto_ip6_24_PFLOG',
-		skip => (skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')) ||
-			skip_config_undef ('INET6'),
+		skip => (skip_os_not ('aix') && skip_os_not ('netbsd') && skip_os_not ('openbsd')),
 		DLT => 'PFLOG',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4363,7 +4335,6 @@ my @accept_blocks = (
 	}, # link_proto_stp_ARCNET
 	{
 		name => 'link_proto_ip6_ARCNET',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'ARCNET',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4421,7 +4392,6 @@ my @accept_blocks = (
 	}, # link_proto_atalk_ARCNET
 	{
 		name => 'link_proto_ip6_ARCNET_LINUX',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'ARCNET_LINUX',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4509,7 +4479,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_FRELAY
 	{
 		name => 'link_proto_ip6_FRELAY',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'FRELAY',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -4580,7 +4549,6 @@ my @accept_blocks = (
 	}, # link_proto_ip_IPNET
 	{
 		name => 'link_proto_ip6_IPNET',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'IPNET',
 		aliases => ['link proto \ip6'],
 		unopt => '
@@ -9271,8 +9239,7 @@ my @accept_blocks = (
 	# DLT_NETANALYZER_TRANSPARENT in all DLT_EN10MB gateway tests.
 	{
 		name => 'gateway_name_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9309,8 +9276,7 @@ my @accept_blocks = (
 	}, # gateway_name_en10mb
 	{
 		name => 'gateway_NAME_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9344,8 +9310,7 @@ my @accept_blocks = (
 	}, # gateway_NAME_en10mb
 	{
 		name => 'ip_gateway_name_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9373,8 +9338,7 @@ my @accept_blocks = (
 	}, # ip_gateway_name_en10mb
 	{
 		name => 'ip_gateway_NAME_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9402,8 +9366,7 @@ my @accept_blocks = (
 	}, # ip_gateway_NAME_en10mb
 	{
 		name => 'arp_gateway_name_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9431,8 +9394,7 @@ my @accept_blocks = (
 	}, # arp_gateway_name_en10mb
 	{
 		name => 'arp_gateway_NAME_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9460,8 +9422,7 @@ my @accept_blocks = (
 	}, # arp_gateway_NAME_en10mb
 	{
 		name => 'rarp_gateway_name_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9489,8 +9450,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_name_en10mb
 	{
 		name => 'rarp_gateway_NAME_en10mb',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'EN10MB',
 		aliases => [
@@ -9518,8 +9478,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_NAME_en10mb
 	{
 		name => 'gateway_name_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9553,8 +9512,7 @@ my @accept_blocks = (
 	}, # gateway_name_fddi
 	{
 		name => 'gateway_NAME_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9588,8 +9546,7 @@ my @accept_blocks = (
 	}, # gateway_NAME_fddi
 	{
 		name => 'ip_gateway_name_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9617,8 +9574,7 @@ my @accept_blocks = (
 	}, # ip_gateway_name_fddi
 	{
 		name => 'ip_gateway_NAME_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9646,8 +9602,7 @@ my @accept_blocks = (
 	}, # ip_gateway_NAME_fddi
 	{
 		name => 'arp_gateway_name_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9675,8 +9630,7 @@ my @accept_blocks = (
 	}, # arp_gateway_name_fddi
 	{
 		name => 'arp_gateway_NAME_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9704,8 +9658,7 @@ my @accept_blocks = (
 	}, # arp_gateway_NAME_fddi
 	{
 		name => 'rarp_gateway_name_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9733,8 +9686,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_name_fddi
 	{
 		name => 'rarp_gateway_NAME_fddi',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'FDDI',
 		aliases => [
@@ -9762,8 +9714,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_NAME_fddi
 	{
 		name => 'gateway_name_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9797,8 +9748,7 @@ my @accept_blocks = (
 	}, # gateway_name_ieee802
 	{
 		name => 'gateway_NAME_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9832,8 +9782,7 @@ my @accept_blocks = (
 	}, # gateway_NAME_ieee802
 	{
 		name => 'ip_gateway_name_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9861,8 +9810,7 @@ my @accept_blocks = (
 	}, # ip_gateway_name_ieee802
 	{
 		name => 'ip_gateway_NAME_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9890,8 +9838,7 @@ my @accept_blocks = (
 	}, # ip_gateway_NAME_ieee802
 	{
 		name => 'arp_gateway_name_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9919,8 +9866,7 @@ my @accept_blocks = (
 	}, # arp_gateway_name_ieee802
 	{
 		name => 'arp_gateway_NAME_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9948,8 +9894,7 @@ my @accept_blocks = (
 	}, # arp_gateway_NAME_ieee802
 	{
 		name => 'rarp_gateway_name_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -9977,8 +9922,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_name_ieee802
 	{
 		name => 'rarp_gateway_NAME_ieee802',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802',
 		aliases => [
@@ -10008,8 +9952,7 @@ my @accept_blocks = (
 	# DLT_IEEE802_11_RADIO and DLT_PPI in all DLT_IEEE802_11 gateway tests.
 	{
 		name => 'gateway_name_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10122,8 +10065,7 @@ my @accept_blocks = (
 	}, # gateway_name_ieee802_11
 	{
 		name => 'gateway_NAME_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10236,8 +10178,7 @@ my @accept_blocks = (
 	}, # gateway_NAME_ieee802_11
 	{
 		name => 'ip_gateway_name_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10326,8 +10267,7 @@ my @accept_blocks = (
 	}, # ip_gateway_name_ieee802_11
 	{
 		name => 'ip_gateway_NAME_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10416,8 +10356,7 @@ my @accept_blocks = (
 	}, # ip_gateway_NAME_ieee802_11
 	{
 		name => 'arp_gateway_name_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10506,8 +10445,7 @@ my @accept_blocks = (
 	}, # arp_gateway_name_ieee802_11
 	{
 		name => 'arp_gateway_NAME_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10596,8 +10534,7 @@ my @accept_blocks = (
 	}, # arp_gateway_NAME_ieee802_11
 	{
 		name => 'rarp_gateway_name_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10686,8 +10623,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_name_ieee802_11
 	{
 		name => 'rarp_gateway_NAME_ieee802_11',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IEEE802_11',
 		aliases => [
@@ -10776,8 +10712,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_NAME_ieee802_11
 	{
 		name => 'gateway_name_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10811,8 +10746,7 @@ my @accept_blocks = (
 	}, # gateway_name_ip_over_fc
 	{
 		name => 'gateway_NAME_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10846,8 +10780,7 @@ my @accept_blocks = (
 	}, # gateway_NAME_ip_over_fc
 	{
 		name => 'ip_gateway_name_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10875,8 +10808,7 @@ my @accept_blocks = (
 	}, # ip_gateway_name_ip_over_fc
 	{
 		name => 'ip_gateway_NAME_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10904,8 +10836,7 @@ my @accept_blocks = (
 	}, # ip_gateway_NAME_ip_over_fc
 	{
 		name => 'arp_gateway_name_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10933,8 +10864,7 @@ my @accept_blocks = (
 	}, # arp_gateway_name_ip_over_fc
 	{
 		name => 'arp_gateway_NAME_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10962,8 +10892,7 @@ my @accept_blocks = (
 	}, # arp_gateway_NAME_ip_over_fc
 	{
 		name => 'rarp_gateway_name_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -10991,8 +10920,7 @@ my @accept_blocks = (
 	}, # rarp_gateway_name_ip_over_fc
 	{
 		name => 'rarp_gateway_NAME_ip_over_fc',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers_casecmp() ||
+		skip => skip_no_ethers_casecmp() ||
 			skip_no_hosts_casecmp(),
 		DLT => 'IP_OVER_FC',
 		aliases => [
@@ -11277,7 +11205,6 @@ my @accept_blocks = (
 
 	{
 		name => 'ip6_host_addr',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 host ::1',
@@ -11333,7 +11260,7 @@ my @accept_blocks = (
 	}, # ip6_host_addr
 	{
 		name => 'ip6_host_name',
-		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		skip => skip_no_hosts(),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 host noeth-noipv4-ipv6.host123.libpcap.test',
@@ -11372,7 +11299,7 @@ my @accept_blocks = (
 	}, # ip6_host_name
 	{
 		name => 'ip6_host_NAME',
-		skip => skip_config_undef ('INET6') || skip_no_hosts_casecmp(),
+		skip => skip_no_hosts_casecmp(),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 host NOETH-NOIPV4-IPV6.HOST123.LIBPCAP.TEST',
@@ -11411,7 +11338,6 @@ my @accept_blocks = (
 	}, # ip6_host_NAME
 	{
 		name => 'ip6_src_host_addr',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 src host fe80::1122:33ff:fe44:5566',
@@ -11442,7 +11368,7 @@ my @accept_blocks = (
 	}, # ip6_src_host_addr
 	{
 		name => 'ip6_src_host_name',
-		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		skip => skip_no_hosts(),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 src host noeth-noipv4-ipv6.host123.libpcap.test',
@@ -11470,7 +11396,7 @@ my @accept_blocks = (
 	}, # ip6_src_host_name
 	{
 		name => 'ip6_src_host_NAME',
-		skip => skip_config_undef ('INET6') || skip_no_hosts_casecmp(),
+		skip => skip_no_hosts_casecmp(),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 src host NOETH-NOIPV4-IPV6.HOST123.LIBPCAP.TEST',
@@ -11498,7 +11424,6 @@ my @accept_blocks = (
 	}, # ip6_src_host_NAME
 	{
 		name => 'ip6_dst_host_addr',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 dst host fe80::7788:99ff:feaa:bbcc',
@@ -11529,7 +11454,7 @@ my @accept_blocks = (
 	}, # ip6_dst_host_addr
 	{
 		name => 'ip6_dst_host_name',
-		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		skip => skip_no_hosts(),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 dst host noeth-noipv4-ipv6.host123.libpcap.test',
@@ -11557,7 +11482,7 @@ my @accept_blocks = (
 	}, # ip6_dst_host_name
 	{
 		name => 'ip6_dst_host_NAME',
-		skip => skip_config_undef ('INET6') || skip_no_hosts_casecmp(),
+		skip => skip_no_hosts_casecmp(),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 dst host NOETH-NOIPV4-IPV6.HOST123.LIBPCAP.TEST',
@@ -11585,7 +11510,6 @@ my @accept_blocks = (
 	}, # ip6_dst_host_NAME
 	{
 		name => 'ip6_net',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 net fe80::/10',
@@ -11609,7 +11533,6 @@ my @accept_blocks = (
 	}, # ip6_net
 	{
 		name => 'ip6_src_net',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => [
 			'ip6 src net 2000::/3',
@@ -11628,7 +11551,6 @@ my @accept_blocks = (
 	}, # ip6_src_net
 	{
 		name => 'ip6_dst_net_0',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => ['ip6 dst net ::/0'],
 		unopt => '
@@ -11641,7 +11563,6 @@ my @accept_blocks = (
 	}, # ip6_dst_net_0
 	{
 		name => 'ip6_dst_net_8',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => ['ip6 dst net ff00::/8'],
 		unopt => '
@@ -11657,7 +11578,6 @@ my @accept_blocks = (
 	}, # ip6_dst_net_8
 	{
 		name => 'ip6_dst_net_40',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => ['ip6 dst net ff11:2233:4400::/40'],
 		unopt => '
@@ -11675,7 +11595,6 @@ my @accept_blocks = (
 	}, # ip6_dst_net_40
 	{
 		name => 'ip6_dst_net_80',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => ['ip6 dst net ff11:2233:4455:6677:8899::/80'],
 		unopt => '
@@ -11695,7 +11614,6 @@ my @accept_blocks = (
 	}, # ip6_dst_net_80
 	{
 		name => 'ip6_dst_net_120',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		aliases => ['ip6 dst net ff11:2233:4455:6677:8899:aabb:ccdd:ee00/120'],
 		unopt => '
@@ -13752,35 +13670,30 @@ my @apply_blocks = (
 	},
 	{
 		name => 'ip6',
-		skip => skip_config_undef ('INET6'),
 		savefile => 'vrrp.pcap',
 		expr => 'ip6',
 		results => [65535, 65535, 0, 0, 0, 0, 65535, 65535, 0, 0, 0, 65535, 65535, 0, 0],
 	},
 	{
 		name => 'ip6_src_1',
-		skip => skip_config_undef ('INET6'),
 		savefile => 'vrrp.pcap',
 		expr => 'ip6 src fe80::d6ca:6dff:fe66:cf60',
 		results => [65535, 65535, 0, 0, 0, 0, 65535, 65535, 0, 0, 0, 0, 0, 0, 0],
 	},
 	{
 		name => 'ip6_src_2',
-		skip => skip_config_undef ('INET6'),
 		savefile => 'pim-packet-assortment.pcap',
 		expr => 'ip6 src 10::1',
 		results => [0, 0, 0, 0, 0, 0, 0, 65535, 65535, 65535],
 	},
 	{
 		name => 'ip6_dst_1',
-		skip => skip_config_undef ('INET6'),
 		savefile => 'vrrp.pcap',
 		expr => 'ip6 dst ff02::12',
 		results => [65535, 65535, 0, 0, 0, 0, 65535, 65535, 0, 0, 0, 65535, 65535, 0, 0],
 	},
 	{
 		name => 'ip6_dst_2',
-		skip => skip_config_undef ('INET6'),
 		savefile => 'pim-packet-assortment.pcap',
 		expr => 'ip6 dst 10::1',
 		results => [0, 0, 0, 0, 0, 0, 65535, 0, 0, 0],
@@ -14252,21 +14165,19 @@ my @reject_tests = (
 	},
 	{
 		name => 'ip6_host_toolong',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		expr => 'ip6 host fe80:0:0:0:0:0:0:0:0',
 		errstr => 'syntax error',
 	},
 	{
 		name => 'ip6_host_ipv4addr',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		expr => 'ip6 host 1.2.3.4',
 		errstr => '\'ip6\' is not a valid qualifier for \'ip host\'',
 	},
 	{
 		name => 'ip6_host_ipv4name',
-		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		skip => skip_no_hosts(),
 		DLT => 'RAW',
 		expr => 'ip6 host noeth-ipv4-noipv6.host123.libpcap.test',
 		errstr => "unknown host \'noeth-ipv4-noipv6.host123.libpcap.test' for specified address family",
@@ -14280,13 +14191,6 @@ my @reject_tests = (
 #		expr => 'ip6 host fe80:0:0:0:0:0:0:g',
 #		errstr => 'unknown host',
 #	},
-	{
-		name => 'ip6_host_disabled',
-		skip => skip_config_def1 ('INET6'),
-		DLT => 'RAW',
-		expr => 'ip6 host fe80:0:0:0:0:0:0:0',
-		errstr => 'not supported',
-	},
 	{
 		name => 'ip_net_bits1',
 		DLT => 'RAW',
@@ -14367,28 +14271,18 @@ my @reject_tests = (
 	},
 	{
 		name => 'ip6_net_prefix',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		expr => 'ip6 net fe80:0:0:0:0:0:0:0:0/64',
 		errstr => 'syntax error',
 	},
 	{
 		name => 'ip6_net_masklen',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		expr => 'ip6 net fe80:0:0:0:0:0:0:0/129',
 		errstr => 'mask length must be <= 128',
 	},
 	{
-		name => 'ip6_net_disabled',
-		skip => skip_config_def1 ('INET6'),
-		DLT => 'RAW',
-		expr => 'ip6 net fe80:0:0:0:0:0:0:0/64',
-		errstr => 'not supported',
-	},
-	{
 		name => 'ip6_net_bits',
-		skip => skip_config_undef ('INET6'),
 		DLT => 'RAW',
 		expr => 'net fe80:1234:5678::/32',
 		errstr => 'non-network bits set in',
@@ -14510,16 +14404,14 @@ my @reject_tests = (
 	},
 	{
 		name => 'arp_host_ipv4_ipv6',
-		skip => skip_config_undef ('INET6') ||
-			skip_no_hosts(),
+		skip => skip_no_hosts(),
 		DLT => 'FDDI',
 		expr => 'arp host eth-ipv4-ipv6.host123.libpcap.test',
 		errstr => '\'arp\' is not a valid qualifier for \'ip6 host\'',
 	},
 	{
 		name => 'rarp_host_ipv4_ipv6',
-		skip => skip_config_undef ('INET6') ||
-			skip_no_hosts(),
+		skip => skip_no_hosts(),
 		DLT => 'FDDI',
 		expr => 'rarp host eth-ipv4-ipv6.host123.libpcap.test',
 		errstr => '\'rarp\' is not a valid qualifier for \'ip6 host\'',
@@ -14643,112 +14535,34 @@ my @reject_tests = (
 		expr => 'proto 1.2.3.4',
 		errstr => '\'proto\' qualifier applied to IPv4 address',
 	},
-	# In the tests below the hostname normally should not matter because the
-	# lookup would be made not in the IPv4/IPv6 space, or not at all.  Still
-	# use a hostname that does not exist on the Internet, just in case.
-	{
-		name => 'link_host_en10mb',
-		DLT => 'EN10MB',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown ether host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_netanalyzer',
-		DLT => 'NETANALYZER',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown ether host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_netanalyzer_transparent',
-		DLT => 'NETANALYZER_TRANSPARENT',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown ether host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_fddi',
-		DLT => 'FDDI',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown FDDI host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_ieee802',
-		DLT => 'IEEE802',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown token ring host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_802_11',
-		DLT => 'IEEE802_11',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown 802.11 host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_802_11_radio',
-		DLT => 'IEEE802_11_RADIO_AVS',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown 802.11 host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_802_11_radio_avs',
-		DLT => 'IEEE802_11_RADIO_AVS',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown 802.11 host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_prism_header',
-		DLT => 'PRISM_HEADER',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown 802.11 host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_ip_over_fc',
-		DLT => 'IP_OVER_FC',
-		expr => "link host ${nonexistent}",
-		errstr => "unknown Fibre Channel host '${nonexistent}'",
-	},
-	{
-		name => 'link_host_other',
-		DLT => 'ARCNET',
-		expr => "link host ${nonexistent}",
-		errstr => 'supports link-level host name',
-	},
 	{
 		name => 'decnet_host',
 		DLT => 'EN10MB',
 		expr => "decnet host ${nonexistent}",
 		errstr => "invalid DECnet address '${nonexistent}'",
 	},
+	# gen_scode() -> case Q_GATEWAY -> pcap_nametoaddrinfo() == NULL
+	# Invokes bpf_error() after pcap_ether_hostton().
 	{
 		name => 'gateway_noipv4_noipv6',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
-			skip_no_hosts(),
+		skip => skip_no_ethers(),
 		DLT => 'EN10MB',
 		expr => 'gateway eth-noipv4-noipv6.host123.libpcap.test',
 		errstr => 'unknown host', # no IPv4 address in /etc/hosts
 	},
+	# gen_scode() -> case Q_GATEWAY -> pcap_nametoaddrinfo() == NULL
+	# Invokes bpf_error() after pcap_ether_hostton().
 	{
 		name => 'gateway_noipv4_ipv6',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		expr => 'gateway eth-noipv4-ipv6.host123.libpcap.test',
 		errstr => 'unknown host', # no IPv4 address in /etc/hosts
 	},
 	{
-		name => 'gateway_noeth',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
-			skip_no_hosts(),
-		DLT => 'EN10MB',
-		expr => 'gateway noeth-ipv4-noipv6.host123.libpcap.test',
-		errstr => 'unknown ether host', # not in /etc/ethers
-	},
-	{
 		name => 'src_gateway',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		expr => 'src gateway eth-ipv4-noipv6.host123.libpcap.test',
@@ -14756,8 +14570,7 @@ my @reject_tests = (
 	},
 	{
 		name => 'dst_gateway',
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => 'EN10MB',
 		expr => 'dst gateway eth-ipv4-noipv6.host123.libpcap.test',
@@ -14811,53 +14624,38 @@ my @reject_tests = (
 		expr => 'dst protochain \tcp',
 		errstr => 'syntax error',
 	},
-	# If "gateway" begins to support IPv6 in future, the reject tests below will
-	# fail and will need to be replaced with accept tests.
-	{
-		name => 'gateway_INET6',
-		skip => skip_config_undef ('INET6'),
-		DLT => 'EN10MB',
-		expr => "gateway eth-ipv4-ipv6.host123.libpcap.test",
-		errstr => 'not supported in this configuration',
-	},
 	{
 		name => 'gateway_1',
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => 'gateway 1',
 		errstr => '\'gateway\' requires a name',
 	},
 	{
 		name => 'gateway_1_2',
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => 'gateway 1.2',
 		errstr => '\'gateway\' requires a name',
 	},
 	{
 		name => 'gateway_1_2_3',
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => 'gateway 1.2.3',
 		errstr => '\'gateway\' requires a name',
 	},
 	{
 		name => 'gateway_1_2_3_4',
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => 'gateway 1.2.3.4',
 		errstr => '\'gateway\' requires a name',
 	},
 	{
 		name => 'gateway_mac48',
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => 'gateway 11:22:33:44:55:66',
 		errstr => 'ethernet address used in non-ether expression',
 	},
 	{
 		name => 'gateway_arcnet',
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => 'gateway $af',
 		errstr => 'aid supported only on ARCnet',
@@ -14911,14 +14709,12 @@ my @reject_tests = (
 		errstr => 'illegal link layer address',
 	},
 	{
-		skip => skip_config_undef ('INET6'),
 		name => 'link_host_ipv6addr',
 		DLT => 'RAW',
 		expr => 'link host fe80::',
 		errstr => '\'link\' is not a valid qualifier for \'ip6 host\'',
 	},
 	{
-		skip => skip_config_undef ('INET6'),
 		name => 'link_net_ipv6addr',
 		DLT => 'RAW',
 		expr => 'link net fe80::',
@@ -15232,37 +15028,71 @@ my %pqual_features = (
 	},
 );
 
-sub pqual_feature {
-	my $name = shift;
+sub item_with_without {
+	my $hashref = shift;
 	my $feature = shift;
-	die if not exists $pqual_features{$name};
-	return exists $pqual_features{$name}{$feature} && $pqual_features{$name}{$feature} == 1;
+	my $wanted_with = shift;
+	my $actual_with = exists $hashref->{$feature} && $hashref->{$feature} == 1;
+	return $wanted_with == $actual_with;
 }
 
-sub pqual_names {
-	return keys %pqual_features;
+sub list_with_without {
+	my $hohref = shift;
+	my $feature = shift;
+	my $wanted_with = shift;
+	my @ret;
+	foreach (sort keys %$hohref) {
+		next unless item_with_without $hohref->{$_}, $feature, $wanted_with;
+		push @ret, $_;
+		last if $only_short;
+	}
+	return @ret;
 }
 
 sub pquals_with {
-	my $feature = shift;
-	my @ret;
-	foreach (pqual_names) {
-		next unless pqual_feature $_, $feature;
-		push @ret, $_;
-		last if $only_short;
-	}
-	return @ret;
+	return list_with_without \%pqual_features, shift, 1;
 }
 
 sub pquals_without {
-	my $feature = shift;
-	my @ret;
-	foreach (pqual_names) {
-		next if pqual_feature $_, $feature;
-		push @ret, $_;
-		last if $only_short;
-	}
-	return @ret;
+	return list_with_without \%pqual_features, shift, 0;
+}
+
+# "dir" qualifiers
+my %dqual_features = (
+	src => {
+	},
+	dst => {
+	},
+	'src or dst' => {
+	},
+	'src and dst' => {
+	},
+	addr1 => {
+		wlan => 1,
+	},
+	addr2 => {
+		wlan => 1,
+	},
+	addr3 => {
+		wlan => 1,
+	},
+	addr4 => {
+		wlan => 1,
+	},
+	ra => {
+		wlan => 1,
+	},
+	ta => {
+		wlan => 1,
+	},
+);
+
+sub dquals_with {
+	return list_with_without \%dqual_features, shift, 1;
+}
+
+sub dquals_without {
+	return list_with_without \%dqual_features, shift, 0;
 }
 
 # All DLTs pcap_datalink_name_to_val() recognizes, ordered by name.
@@ -15763,37 +15593,18 @@ my %DLTfeatures = (
 	},
 );
 
-sub DLT_names {
-	return keys %DLTfeatures;
+sub DLTs_with {
+	return list_with_without \%DLTfeatures, shift, 1;
+}
+
+sub DLTs_without {
+	return list_with_without \%DLTfeatures, shift, 0;
 }
 
 sub DLT_feature {
 	my $name = shift;
 	my $feature = shift;
-	die if not exists $DLTfeatures{$name};
-	return exists $DLTfeatures{$name}{$feature} && $DLTfeatures{$name}{$feature} == 1;
-}
-
-sub DLTs_with {
-	my $feature = shift;
-	my @ret;
-	foreach (DLT_names) {
-		next unless DLT_feature $_, $feature;
-		push @ret, $_;
-		last if $only_short;
-	}
-	return @ret;
-}
-
-sub DLTs_without {
-	my $feature = shift;
-	my @ret;
-	foreach (DLT_names) {
-		next if DLT_feature $_, $feature;
-		push @ret, $_;
-		last if $only_short;
-	}
-	return @ret;
+	return item_with_without $DLTfeatures{$name}, $feature, 1;
 }
 
 # gen_load_internal() -> default
@@ -15828,7 +15639,6 @@ foreach (pquals_without 'host') {
 	};
 	# HID6 -> gen_mcode6() -> gen_host6() -> default
 	push @reject_tests, {
-		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_host_ipv6addr",
 		DLT => 'EN10MB',
 		expr => "${_} host fe80::",
@@ -15836,7 +15646,6 @@ foreach (pquals_without 'host') {
 	};
 	# HID6 -> gen_mcode6() -> gen_host6() -> default
 	push @reject_tests, {
-		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_net_ipv6addr",
 		DLT => 'EN10MB',
 		expr => "${_} net fe80::",
@@ -15875,7 +15684,6 @@ foreach (pquals_without 'host') {
 	};
 	# HID6 '/' NUM -> gen_mcode6() -> default
 	push @reject_tests, {
-		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_host_ipv6cidr",
 		DLT => 'EN10MB',
 		expr => "${_} host fe80::/16",
@@ -15883,7 +15691,6 @@ foreach (pquals_without 'host') {
 	};
 	# HID6 '/' NUM -> gen_mcode6() -> gen_host6() -> default
 	push @reject_tests, {
-		skip => skip_config_undef ('INET6'),
 		name => "inv_qual_${_}_net_ipv6cidr",
 		DLT => 'EN10MB',
 		expr => "${_} net fe80::/16",
@@ -15908,7 +15715,7 @@ foreach (pquals_without 'host') {
 	};
 	# ID -> gen_scode() -> gen_host6() -> default
 	push @reject_tests, {
-		skip => skip_config_undef ('INET6') || skip_no_hosts(),
+		skip => skip_no_hosts(),
 		name => "inv_qual_${_}_host_ipv6name",
 		DLT => 'EN10MB',
 		expr => "${_} host noeth-noipv4-ipv6.host123.libpcap.test",
@@ -15917,11 +15724,11 @@ foreach (pquals_without 'host') {
 	# (IPv6 networks cannot have names)
 }
 
-# ID -> gen_scode() -> gen_gateway() -> default
+# ID -> gen_scode() -> case Q_GATEWAY -> gen_gateway() -> default
+# Invokes bpf_error() after pcap_ether_hostton().
 foreach (pquals_without 'gateway') {
 	push @reject_tests, {
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		name => "inv_qual_${_}_gateway_ipv4name",
 		DLT => 'EN10MB',
@@ -15930,11 +15737,33 @@ foreach (pquals_without 'gateway') {
 	};
 }
 
-foreach my $pq (pqual_names) {
+foreach (DLTs_without 'link_host_mac48') {
+	# ID -> gen_scode() -> case Q_GATEWAY -> gen_gateway() -> case Q_DEFAULT -> default
+	# Invokes bpf_error() after pcap_ether_hostton().
+	push @reject_tests, {
+		name => "gateway_ipv4_noipv6_${_}",
+			skip => skip_no_ethers() ||
+				skip_no_hosts(),
+		DLT => $_,
+		expr => 'gateway eth-ipv4-noipv6.host123.libpcap.test',
+		errstr => '\'gateway\' not supported on',
+	};
+	# ID -> gen_scode() -> case Q_GATEWAY -> gen_gateway() -> case Q_DEFAULT -> default
+	# Invokes bpf_error() after pcap_ether_hostton().
+	push @reject_tests, {
+		name => "gateway_ipv4_ipv6_${_}",
+			skip => skip_no_ethers() ||
+				skip_no_hosts(),
+		DLT => $_,
+		expr => 'gateway eth-ipv4-ipv6.host123.libpcap.test',
+		errstr => '\'gateway\' not supported on',
+	};
+}
+
+foreach my $pq (pquals_without '') {
 	# HID -> gen_ncode() -> case Q_GATEWAY
 	push @reject_tests, {
 		name => "${pq}_gateway_HID",
-		skip => skip_config_def1 ('INET6'),
 		DLT => 'EN10MB',
 		expr => "$pq gateway 11.12.13.14",
 		errstr => $pq eq 'decnet' ?
@@ -15982,7 +15811,6 @@ foreach my $pq (pqual_names) {
 	# HID6 -> gen_mcode6() -> default
 	push @reject_tests, {
 		name => "${pq}_gateway_HID6",
-		skip => skip_config_undef ('INET6'),
 		DLT => 'EN10MB',
 		expr => "$pq gateway fe80::0",
 		errstr => 'invalid qualifier against IPv6 address',
@@ -15990,9 +15818,7 @@ foreach my $pq (pqual_names) {
 	# HID6
 	push @reject_tests, {
 		name => "${pq}_${_}_HID6",
-		skip => $_ eq 'protochain' ?
-			(skip_config_def1 ('NO_PROTOCHAIN') || skip_config_undef ('INET6')) :
-			skip_config_undef ('INET6'),
+		skip => $_ eq 'protochain' ? skip_config_def1 ('NO_PROTOCHAIN') : '',
 		DLT => 'EN10MB',
 		expr => "$pq $_ fe80::0",
 		errstr => "'$_' qualifier applied to IPv6 address",
@@ -16000,7 +15826,6 @@ foreach my $pq (pqual_names) {
 	# HID6 '/' NUM -> gen_mcode6() -> default
 	push @reject_tests, {
 		name => "${pq}_gateway_HID6_NUM",
-		skip => skip_config_undef ('INET6'),
 		DLT => 'EN10MB',
 		expr => "$pq gateway fe80::0/64",
 		errstr => 'invalid qualifier against IPv6 address',
@@ -16008,9 +15833,7 @@ foreach my $pq (pqual_names) {
 	# HID6 '/' NUM
 	push @reject_tests, {
 		name => "${pq}_${_}_HID6_NUM",
-		skip => $_ eq 'protochain' ?
-			(skip_config_def1 ('NO_PROTOCHAIN') || skip_config_undef ('INET6')) :
-			skip_config_undef ('INET6'),
+		skip => $_ eq 'protochain' ? skip_config_def1 ('NO_PROTOCHAIN') : '',
 		DLT => 'EN10MB',
 		expr => "$pq $_ fe80::0/64",
 		errstr => "'$_' qualifier applied to IPv6 address and prefix length",
@@ -16074,7 +15897,7 @@ foreach (DLTs_without 'link_proto') {
 	};
 }
 
-# gen_broadcast() -> case Q_LINK -> default
+# gen_broadcast() -> case Q_LINK -> gen_mac48host() -> fail_kw_on_dlt()
 foreach (DLTs_without 'link_broadcast') {
 	push @reject_tests, {
 		name => "link_broadcast_${_}",
@@ -16141,6 +15964,20 @@ foreach (DLTs_without 'wlan') {
 	};
 }
 
+# gen_scode() -> case Q_HOST -> proto == Q_LINK -> non-WLAN case -> gen_mac48host() -> default case
+# Invokes bpf_error() after pcap_ether_hostton().
+foreach my $DLT (DLTs_without '') {
+	next if ! DLT_feature ($DLT, 'link_host_mac48') || DLT_feature ($DLT, 'wlan');
+	push @reject_tests, {
+		name => "link_${_}_name_${DLT}",
+		skip => skip_no_ethers(),
+		DLT => $DLT,
+		expr => "link $_ eth-noipv4-noipv6.host123.libpcap.test",
+		errstr => "'$_' is valid for 802.11 syntax only",
+	} foreach dquals_with 'wlan';
+	last if $only_short;
+}
+
 # gen_acode() -> default
 foreach (DLTs_without 'link_host_mac8') {
 	push @reject_tests, {
@@ -16162,23 +15999,50 @@ foreach (DLTs_without 'ss7') {
 }
 
 foreach (DLTs_without 'link_host_mac48') {
-	# gen_gateway() -> case Q_DEFAULT -> default
+	# gen_scode() -> case Q_GATEWAY -> fail_kw_on_dlt()
 	push @reject_tests, {
 		name => "gateway_name_${_}",
-		skip => skip_config_def1 ('INET6') ||
-			skip_no_ethers() ||
+		skip => skip_no_ethers() ||
 			skip_no_hosts(),
 		DLT => $_,
 		expr => 'gateway eth-ipv4-noipv6.host123.libpcap.test',
-		errstr => '\'gateway\' supported only on ethernet/FDDI/token ring/802.11/ATM LANE/Fibre Channel',
+		errstr => '\'gateway\' not supported on',
 	};
-	# gen_scode() -> case Q_DEFAULT -> Q_LINK
+	# gen_scode() -> case Q_DEFAULT -> Q_LINK -> fail_kw_on_dlt()
 	push @reject_tests, {
 		name => "link_host_name_${_}",
 		skip => skip_no_ethers(),
 		DLT => $_,
 		expr => 'link host eth-noipv4-noipv6.host123.libpcap.test',
-		errstr => 'only ethernet/FDDI/token ring/802.11/ATM LANE/Fibre Channel supports link-level host name',
+		errstr => '\'link host NAME\' not supported on',
+	};
+	# gen_ecode() -> fail_kw_on_dlt()
+	push @reject_tests, {
+		name => "link_host_mac48_${_}",
+		DLT => $_,
+		expr => 'link host a:b:c:d:e:f',
+		errstr => '\'link host XX:XX:XX:XX:XX:XX\' not supported on',
+	};
+}
+
+foreach (DLTs_with 'link_host_mac48') {
+	# gen_scode() -> case Q_GATEWAY -> eaddrp == NULL
+	push @reject_tests, {
+		name => "gateway_nonex_${_}",
+		skip => skip_no_hosts(),
+		DLT => $_,
+		expr => 'gateway noeth-ipv4-noipv6.host123.libpcap.test',
+		errstr => "unknown Ethernet-like host 'noeth-ipv4-noipv6.host123.libpcap.test'",
+	};
+	# In the test below the hostname normally should not matter because the
+	# lookup would be made not in the IPv4/IPv6 space, or not at all.  Still
+	# use a hostname that does not exist on the Internet, just in case.
+	# gen_scode() -> case Q_HOST -> proto == Q_LINK -> eaddrp == NULL
+	push @reject_tests, {
+		name => "link_host_nonex_${_}",
+		DLT => $_,
+		expr => "link host ${nonexistent}",
+		errstr => "unknown Ethernet-like host '${nonexistent}'",
 	};
 }
 
